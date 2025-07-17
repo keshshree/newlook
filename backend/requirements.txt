@@ -7,3 +7,4 @@ textblob
 pyotp
 google-generativeai
 google-api-core
+flake8
