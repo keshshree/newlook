@@ -1,0 +1,3 @@
+React Docs: https://react.dev/ - The official documentation for React.
+MDN Web Docs: https://developer.mozilla.org/ - A comprehensive resource for web development documentation.
+Stack Overflow: https://stackoverflow.com/ - A popular Q&A platform for programmers.
