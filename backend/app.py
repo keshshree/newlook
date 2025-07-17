@@ -5,7 +5,7 @@ from sentiment import analyze_sentiment
 from recommendation import get_recommendations
 from validator import luhn_check
 from fraud_detector import detect_fraud
-from Tools.trading_maximization import max_profit
+from trading_maximization import max_profit
 import yfinance as yf
 from textblob import TextBlob
 import pyotp

@@ -28,21 +28,37 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Sidebar functions
     function openNav() {
-        sidebar.style.width = "250px";
-        mainWrapper.style.marginLeft = "250px";
+        if (sidebar) {
+            sidebar.style.width = "250px";
+        }
+        if (mainWrapper) {
+            mainWrapper.style.marginLeft = "250px";
+        }
     }
 
     function closeNav() {
-        sidebar.style.width = "0";
-        mainWrapper.style.marginLeft = "0";
+        if (sidebar) {
+            sidebar.style.width = "0";
+        }
+        if (mainWrapper) {
+            mainWrapper.style.marginLeft = "0";
+        }
     }
 
-    if (openBtn) {
-        openBtn.addEventListener('click', openNav);
-    }
-    if (closeBtn) {
-        closeBtn.addEventListener('click', closeNav);
-    }
+// ✅ Attach listeners
+if (openBtn) {
+  openBtn.addEventListener("click", openNav);
+  console.log("openBtn found and event listener added.");
+} else {
+  console.error("openBtn not found!");
+}
+
+if (closeBtn) {
+  closeBtn.addEventListener("click", closeNav);
+  console.log("closeBtn found and event listener added.");
+} else {
+  console.error("closeBtn not found!");
+}
 
     // Function to validate email domain
     function isValidEmail(email) {
@@ -193,5 +209,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initial state: show welcome screen
     welcomeContainer.style.display = 'block';
     mfaContainer.style.display = 'none';
-    mainWrapper.style.display = 'none';
+    mainContent.style.display = 'none';
+    mainWrapper.style.display = 'block'; // Ensure mainWrapper is visible
 });
