@@ -4,3 +4,6 @@ numpy
 scikit-learn
 yfinance
 textblob
+pyotp
+google-generativeai
+google-api-core

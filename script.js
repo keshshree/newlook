@@ -1,372 +1,197 @@
+document.addEventListener('DOMContentLoaded', function() {
+    const welcomeContainer = document.getElementById('welcome-container');
+    const welcomeNameInput = document.getElementById('welcome-name');
+    const welcomeEmailInput = document.getElementById('welcome-email');
+    const welcomeSubmitButton = document.getElementById('welcome-submit');
+    const welcomeError = document.getElementById('welcome-error');
 
+    const mfaContainer = document.getElementById('mfa-container');
+    const mfaEmailInput = document.getElementById('mfa-email');
+    const mfaEmailSubmitButton = document.getElementById('mfa-email-submit');
+    const mfaEmailError = document.getElementById('mfa-email-error');
+    const mfaSetupSection = document.getElementById('mfa-setup-section');
+    const mfaQrCode = document.getElementById('mfa-qr-code');
+    const mfaSecretKey = document.getElementById('mfa-secret-key');
+    const mfaCodeInput = document.getElementById('mfa-code');
+    const mfaVerifyButton = document.getElementById('mfa-verify-button');
+    const mfaVerifyError = document.getElementById('mfa-verify-error');
+    const mfaVerifySuccess = document.getElementById('mfa-verify-success');
+    const mfaLoader = document.getElementById('mfa-loader');
 
-document.getElementById('translate-button').addEventListener('click', async function() {
-    const text = document.getElementById('text-to-translate').value;
-    const targetLanguage = document.getElementById('target-language').value;
-    const translatedTextElement = document.getElementById('translated-text');
+    const mainContent = document.getElementById('main-content');
+    const mainWrapper = document.getElementById('main-wrapper');
+    const sidebar = document.getElementById('sidebar');
+    const openBtn = document.querySelector('.openbtn');
+    const closeBtn = document.querySelector('.closebtn');
 
-    try {
-        console.log('Sending translation request...');
-        const response = await fetch(`http://127.0.0.1:5000/translate`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ text: text, target_language: targetLanguage })
-        });
-        console.log('Received response:', response);
-        const data = await response.json();
-        console.log('Parsed data:', data);
+    let userEmail = '';
 
-        if (data.translated_text) {
-            translatedTextElement.innerText = data.translated_text;
-        } else if (data.error) {
-            translatedTextElement.innerText = `Error: ${data.error}`;
-        } else {
-            translatedTextElement.innerText = 'Unexpected response from server.';
-        }
-    } catch (error) {
-        console.error('Error translating text:', error);
-        translatedTextElement.innerText = 'Failed to translate text. Check console for details.';
+    // Sidebar functions
+    function openNav() {
+        sidebar.style.width = "250px";
+        mainWrapper.style.marginLeft = "250px";
     }
-});
 
-document.getElementById('get-stock-info-button').addEventListener('click', async function() {
-    const ticker = document.getElementById('stock-ticker-input').value.toUpperCase();
-    const stockInfoOutput = document.getElementById('stock-info-output');
-
-    stockInfoOutput.innerHTML = ''; // Clear previous results
-
-    try {
-        const response = await fetch(`http://127.0.0.1:5000/stock_info?ticker=${ticker}`);
-        const data = await response.json();
-
-        if (data.error) {
-            stockInfoOutput.innerHTML = `<p style="color: red;">Error: ${data.error}</p>`;
-        } else if (data.symbol) {
-            stockInfoOutput.innerHTML = `
-                <p><strong>${data.longName} (${data.symbol})</strong></p>
-                <p>Current Price: ${data.currentPrice} ${data.currency}</p>
-                <p>Previous Close: ${data.previousClose} ${data.currency}</p>
-                <p>Open: ${data.open} ${data.currency}</p>
-                <p>Day High: ${data.dayHigh} ${data.currency}</p>
-                <p>Day Low: ${data.dayLow} ${data.currency}</p>
-                <p>Volume: ${data.volume}</p>
-                <p>Market Cap: ${data.marketCap} ${data.currency}</p>
-            `;
-        } else {
-            stockInfoOutput.innerHTML = '<p>No stock information found for this ticker.</p>';
-        }
-    } catch (error) {
-        console.error('Error fetching stock info:', error);
-        stockInfoOutput.innerHTML = '<p style="color: red;">Failed to fetch stock information.</p>';
+    function closeNav() {
+        sidebar.style.width = "0";
+        mainWrapper.style.marginLeft = "0";
     }
-});
 
-let stockChart;
+    if (openBtn) {
+        openBtn.addEventListener('click', openNav);
+    }
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeNav);
+    }
 
-document.getElementById('view-chart-button').addEventListener('click', async function() {
-    const ticker = document.getElementById('chart-ticker-input').value.toUpperCase();
-    const chartLoader = document.getElementById('chart-loader');
-    const chartError = document.getElementById('chart-error');
-    const chartCanvas = document.getElementById('stock-chart');
+    // Function to validate email domain
+    function isValidEmail(email) {
+        const allowedDomains = ['@gmail.com', '@yahoo.com'];
+        return allowedDomains.some(domain => email.endsWith(domain));
+    }
 
-    chartError.innerText = '';
-    chartLoader.style.display = 'block';
+    // Welcome screen submit handler
+    welcomeSubmitButton.addEventListener('click', function() {
+        const name = welcomeNameInput.value.trim();
+        const email = welcomeEmailInput.value.trim();
 
-    try {
-        const response = await fetch(`http://127.0.0.1:5000/history?ticker=${ticker}`);
-        const data = await response.json();
+        welcomeError.style.display = 'none';
 
-        if (data.length === 0) {
-            chartError.innerText = 'No data found for this ticker. Please try another.';
-            chartCanvas.style.display = 'none';
+        if (!name || !email) {
+            welcomeError.innerText = 'Name and Email cannot be empty.';
+            welcomeError.style.display = 'block';
             return;
         }
 
-        chartCanvas.style.display = 'block';
-        const dates = data.map(item => item.Date);
-        const prices = data.map(item => item.Close);
-
-        if (stockChart) {
-            stockChart.destroy(); // Destroy existing chart before creating a new one
-        }
-
-        const ctx = chartCanvas.getContext('2d');
-        stockChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: dates,
-                datasets: [{
-                    label: `${ticker} Stock Price`,
-                    data: prices,
-                    fill: false,
-                    borderColor: 'rgb(75, 192, 192)',
-                    tension: 0.1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Date'
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Price'
-                        }
-                    }
-                }
-            }
-        });
-    } catch (error) {
-        console.error('Error fetching chart data:', error);
-        chartError.innerText = 'Failed to load chart data. Please check the ticker and try again.';
-        chartCanvas.style.display = 'none';
-    } finally {
-        chartLoader.style.display = 'none';
-    }
-});
-
-
-
-let stockChart;
-
-
-document.getElementById('view-chart-button').addEventListener('click', async function() {
-    const ticker = document.getElementById('chart-ticker-input').value.toUpperCase();
-    const chartLoader = document.getElementById('chart-loader');
-    const chartError = document.getElementById('chart-error');
-    const chartCanvas = document.getElementById('stock-chart');
-
-    chartError.innerText = '';
-    chartLoader.style.display = 'block';
-
-    try {
-        const response = await fetch(`http://127.0.0.1:5000/history?ticker=${ticker}`);
-        const data = await response.json();
-
-        if (data.length === 0) {
-            chartError.innerText = 'No data found for this ticker. Please try another.';
-            chartCanvas.style.display = 'none';
+        if (!isValidEmail(email)) {
+            welcomeError.innerText = 'Invalid email domain. Only @gmail.com and @yahoo.com are allowed.';
+            welcomeError.style.display = 'block';
             return;
         }
 
-        chartCanvas.style.display = 'block';
-        const dates = data.map(item => item.Date);
-        const prices = data.map(item => item.Close);
+        userEmail = email;
+        welcomeContainer.style.display = 'none';
+        mfaContainer.style.display = 'block';
+        mfaEmailInput.value = userEmail; // Pre-fill MFA email input
+    });
 
-        if (stockChart) {
-            stockChart.destroy(); // Destroy existing chart before creating a new one
+    // MFA email submit handler (for re-entering email if needed)
+    mfaEmailSubmitButton.addEventListener('click', async function() {
+        const email = mfaEmailInput.value.trim();
+        mfaEmailError.style.display = 'none';
+        mfaLoader.style.display = 'none';
+        mfaSetupSection.style.display = 'none';
+        mfaQrCode.style.display = 'none';
+        mfaSecretKey.innerText = '';
+
+        if (!email) {
+            mfaEmailError.innerText = 'Email cannot be empty.';
+            mfaEmailError.style.display = 'block';
+            return;
         }
 
-        const ctx = chartCanvas.getContext('2d');
-        stockChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: dates,
-                datasets: [{
-                    label: `${ticker} Stock Price`,
-                    data: prices,
-                    fill: false,
-                    borderColor: 'rgb(75, 192, 192)',
-                    tension: 0.1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Date'
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Price'
-                        }
-                    }
-                }
-            }
-        });
-    } catch (error) {
-        console.error('Error fetching chart data:', error);
-        chartError.innerText = 'Failed to load chart data. Please check the ticker and try again.';
-        chartCanvas.style.display = 'none';
-    } finally {
-        chartLoader.style.display = 'none';
-    }
-});
-
-document.getElementById('predict-button').addEventListener('click', async function() {
-    const ticker = document.getElementById('predict-ticker-input').value.toUpperCase();
-    const predictLoader = document.getElementById('predict-loader');
-    const predictError = document.getElementById('predict-error');
-    const predictionResult = document.getElementById('prediction-result');
-
-    predictError.innerText = '';
-    predictionResult.innerText = '';
-    predictLoader.style.display = 'block';
-
-    try {
-        const response = await fetch(`http://127.0.0.1:5000/predict?ticker=${ticker}`);
-        const data = await response.json();
-
-        if (data.prediction && data.prediction.length > 0) {
-            predictionResult.innerText = `Predicted next value for ${ticker}: ${data.prediction[0].toFixed(2)}`;
-        } else {
-            predictError.innerText = 'Could not get prediction for this ticker. Please try another.';
+        if (!isValidEmail(email)) {
+            mfaEmailError.innerText = 'Invalid email domain. Only @gmail.com and @yahoo.com are allowed.';
+            mfaEmailError.style.display = 'block';
+            return;
         }
-    } catch (error) {
-        console.error('Error fetching prediction:', error);
-        predictError.innerText = 'Failed to get prediction. Please check the ticker and try again.';
-    } finally {
-        predictLoader.style.display = 'none';
-    }
-});
 
-document.getElementById('analyze-sentiment-button').addEventListener('click', async function() {
-    const text = document.getElementById('sentiment-text').value;
-    const sentimentLoader = document.getElementById('sentiment-loader');
-    const sentimentError = document.getElementById('sentiment-error');
-    const sentimentResult = document.getElementById('sentiment-result');
+        userEmail = email;
+        mfaLoader.style.display = 'block';
 
-    sentimentError.innerText = '';
-    sentimentResult.innerText = '';
-    sentimentLoader.style.display = 'block';
-
-    try {
-        const response = await fetch(`http://127.0.0.1:5000/sentiment`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ text: text })
-        });
-        const data = await response.json();
-
-        if (data.sentiment) {
-            sentimentResult.innerText = `Sentiment: ${data.sentiment}`;
-        } else {
-            sentimentError.innerText = 'Could not analyze sentiment. Please try again.';
-        }
-    } catch (error) {
-        console.error('Error analyzing sentiment:', error);
-        sentimentError.innerText = 'Failed to analyze sentiment. Please try again.';
-    } finally {
-        sentimentLoader.style.display = 'none';
-    }
-});
-
-
-document.getElementById('get-recommendations-button').addEventListener('click', async function() {
-    const preference = document.getElementById('user-preference').value;
-    const recommendationLoader = document.getElementById('recommendation-loader');
-    const recommendationError = document.getElementById('recommendation-error');
-    const recommendationList = document.getElementById('recommendation-list');
-
-    recommendationError.innerText = '';
-    recommendationList.innerHTML = '';
-    recommendationLoader.style.display = 'block';
-
-    try {
-        const response = await fetch(`http://127.0.0.1:5000/recommend`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ preference: preference })
-        });
-        const data = await response.json();
-
-        if (data.recommendations && data.recommendations.length > 0) {
-            data.recommendations.forEach(item => {
-                const li = document.createElement('li');
-                li.innerText = item;
-                recommendationList.appendChild(li);
+        try {
+            const response = await fetch(`http://127.0.0.1:5000/mfa/setup`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email: userEmail })
             });
-        } else {
-            recommendationError.innerText = 'No recommendations found for this preference. Please try another.';
+            const data = await response.json();
+
+            if (data.secret) {
+                // Clear previous QR code
+                mfaQrCode.innerHTML = '';
+                // Generate QR code using qrcode.js
+                new QRCode(mfaQrCode, {
+                    text: data.provisioning_uri,
+                    width: 200,
+                    height: 200,
+                });
+                mfaSecretKey.innerText = data.secret;
+                mfaSetupSection.style.display = 'block';
+            } else if (data.error) {
+                mfaEmailError.innerText = `Error: ${data.error}`;
+                mfaEmailError.style.display = 'block';
+            } else {
+                mfaEmailError.innerText = 'Failed to set up MFA. Unexpected response.';
+                mfaEmailError.style.display = 'block';
+            }
+        } catch (error) {
+            console.error('Error setting up MFA:', error);
+            mfaEmailError.innerText = 'Failed to set up MFA. Check console for details.';
+            mfaEmailError.style.display = 'block';
+        } finally {
+            mfaLoader.style.display = 'none';
         }
-    } catch (error) {
-        console.error('Error getting recommendations:', error);
-        recommendationError.innerText = 'Failed to get recommendations. Please try again.';
-    } finally {
-        recommendationLoader.style.display = 'none';
-    }
-});
+    });
 
-document.getElementById('validate-card-button').addEventListener('click', async function() {
-    const cardNumber = document.getElementById('card-number-input').value;
-    const cardValidatorLoader = document.getElementById('card-validator-loader');
-    const cardValidatorError = document.getElementById('card-validator-error');
-    const cardValidationResult = document.getElementById('card-validation-result');
+    // MFA code verification handler
+    mfaVerifyButton.addEventListener('click', async function() {
+        const mfaCode = mfaCodeInput.value.trim();
+        mfaVerifyError.style.display = 'none';
+        mfaVerifySuccess.style.display = 'none';
+        mfaLoader.style.display = 'block';
 
-    cardValidatorError.innerText = '';
-    cardValidationResult.innerText = '';
-    cardValidatorLoader.style.display = 'block';
-
-    try {
-        const response = await fetch(`http://127.0.0.1:5000/validate_card`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ card_number: cardNumber })
-        });
-        const data = await response.json();
-
-        if (data.is_valid !== undefined) {
-            cardValidationResult.innerText = `Card is ${data.is_valid ? 'Valid' : 'Invalid'}`;
-        } else {
-            cardValidatorError.innerText = 'Could not validate card. Please try again.';
+        if (!mfaCode) {
+            mfaVerifyError.innerText = 'Please enter the 6-digit code.';
+            mfaVerifyError.style.display = 'block';
+            mfaLoader.style.display = 'none';
+            return;
         }
-    } catch (error) {
-        console.error('Error validating card:', error);
-        cardValidatorError.innerText = 'Failed to validate card. Please try again.';
-    } finally {
-        cardValidatorLoader.style.display = 'none';
-    }
-});
 
-document.getElementById('detect-fraud-button').addEventListener('click', async function() {
-    const amount = parseFloat(document.getElementById('transaction-amount').value);
-    const location = document.getElementById('transaction-location').value;
-    const fraudDetectionLoader = document.getElementById('fraud-detection-loader');
-    const fraudDetectionError = document.getElementById('fraud-detection-error');
-    const fraudDetectionResult = document.getElementById('fraud-detection-result');
-
-    fraudDetectionError.innerText = '';
-    fraudDetectionResult.innerText = '';
-    fraudDetectionLoader.style.display = 'block';
-
-    try {
-        const response = await fetch(`http://127.0.0.1:5000/detect_fraud`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ amount: amount, location: location })
-        });
-        const data = await response.json();
-
-        if (data.is_fraud !== undefined) {
-            fraudDetectionResult.innerText = `Fraudulent Transaction: ${data.is_fraud ? 'Yes' : 'No'}`;
-        } else {
-            fraudDetectionError.innerText = 'Could not detect fraud. Please try again.';
+        // MFA Bypass
+        if (mfaCode === '101010') {
+            mfaVerifySuccess.innerText = 'Bypass successful! Redirecting...';
+            mfaVerifySuccess.style.display = 'block';
+            mfaContainer.style.display = 'none';
+            mainWrapper.style.display = 'block'; // Show main content
+            return;
         }
-    } catch (error) {
-        console.error('Error detecting fraud:', error);
-        fraudDetectionError.innerText = 'Failed to detect fraud. Please try again.';
-    } finally {
-        fraudDetectionLoader.style.display = 'none';
-    }
+
+        try {
+            const response = await fetch(`http://127.0.0.1:5000/mfa/verify`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email: userEmail, code: mfaCode })
+            });
+            const data = await response.json();
+
+            if (data.verified) {
+                mfaVerifySuccess.innerText = 'MFA verified successfully! Redirecting...';
+                mfaVerifySuccess.style.display = 'block';
+                mfaContainer.style.display = 'none';
+                mainWrapper.style.display = 'block'; // Show main content
+            } else if (data.error) {
+                mfaVerifyError.innerText = `Verification failed: ${data.error}`;
+                mfaVerifyError.style.display = 'block';
+            } else {
+                mfaVerifyError.innerText = 'Verification failed. Invalid code or unexpected response.';
+                mfaVerifyError.style.display = 'block';
+            }
+        } catch (error) {
+            console.error('Error verifying MFA code:', error);
+            mfaVerifyError.innerText = 'Failed to verify MFA code. Check console for details.';
+            mfaVerifyError.style.display = 'block';
+        } finally {
+            mfaLoader.style.display = 'none';
+        }
+    });
+
+    // Initial state: show welcome screen
+    welcomeContainer.style.display = 'block';
+    mfaContainer.style.display = 'none';
+    mainWrapper.style.display = 'none';
 });

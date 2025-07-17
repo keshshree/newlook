@@ -8,19 +8,55 @@
 
 </head>
 <body>
-  <header>
-    <h1>Newlook</h1>
-    <nav>
-      <ul>
-        <li><a href="#translation">Translation</a></li>
-        <li><a href="#charts">Charts</a></li>
-        <li><a href="#sentiment">Sentiment</a></li>
-        <li><a href="#fraud">Fraud Detection</a></li>
-      </ul>
-    </nav>
-  </header>
+  <div id="sidebar">
+    <a href="javascript:void(0)" class="closebtn">&times;</a>
+    <a href="#translation">Translation</a>
+    <a href="#charts">Charts</a>
+    <a href="#sentiment">Sentiment</a>
+    <a href="#fraud">Fraud Detection</a>
+    <a href="#ai-chat">Gemini AI</a>
+    <a href="#tool-descriptions">Tool Descriptions</a>
+    <a href="#reference-links">Reference Links</a>
+  </div>
 
-  <main>
+  <div id="main-wrapper">
+    <header>
+      <span style="font-size:30px;cursor:pointer" class="openbtn">&#9776;</span>
+      <h1>Newlook</h1>
+    </header>
+
+    <div id="welcome-container">
+    <h2>Welcome to Newlook!</h2>
+    <p>Please enter your name and email to continue.</p>
+    <input type="text" id="welcome-name" placeholder="Your Name" />
+    <input type="email" id="welcome-email" placeholder="Your Email" />
+    <button id="welcome-submit">Continue</button>
+    <p id="welcome-error" class="error-message" style="display: none;"></p>
+  </div>
+
+  <div id="mfa-container" style="display: none;">
+    <h2>Multi-Factor Authentication</h2>
+    <div id="email-input-section">
+      <p>Please enter your email address to proceed. Only @gmail.com and @yahoo.com are accepted.</p>
+      <input type="email" id="mfa-email" placeholder="Enter your email" />
+      <button id="mfa-email-submit">Submit Email</button>
+      <p id="mfa-email-error" class="error-message" style="display: none;"></p>
+    </div>
+
+    <div id="mfa-setup-section" style="display: none;">
+      <p>Scan the QR code with your Google Authenticator app:</p>
+      <div id="mfa-qr-code"></div>
+      <p>Or manually enter this key: <span id="mfa-secret-key"></span></p>
+      <p>Enter the 6-digit code from your authenticator app:</p>
+      <input type="text" id="mfa-code" placeholder="Enter MFA code" />
+      <button id="mfa-verify-button">Verify Code</button>
+      <p id="mfa-verify-error" class="error-message" style="display: none;"></p>
+      <p id="mfa-verify-success" class="success-message" style="display: none;"></p>
+    </div>
+    <p id="mfa-loader" class="loader-message" style="display: none;">Loading...</p>
+  </div>
+
+  <main id="main-content" style="display: none;">
     <section id="translation">
       <h2>Translation Service</h2>
       <textarea id="text-to-translate" placeholder="Enter text to translate..."></textarea>
@@ -33,6 +69,9 @@
       </select>
       <button id="translate-button">Translate</button>
       <p id="translated-text" class="output"></p>
+      <p id="translation-loader" class="loader-message" style="display: none;">Translating...</p>
+      <p id="translation-error" class="error-message" style="display: none;"></p>
+      <p id="translation-success" class="success-message" style="display: none;"></p>
     </section>
 
     <section id="stock-info">
@@ -40,6 +79,9 @@
       <input type="text" id="stock-ticker-input" placeholder="e.g., AAPL" />
       <button id="get-stock-info-button">Get Stock Info</button>
       <div id="stock-info-output" class="output"></div>
+      <p id="stock-info-loader" class="loader-message" style="display: none;">Fetching stock info...</p>
+      <p id="stock-info-error" class="error-message" style="display: none;"></p>
+      <p id="stock-info-success" class="success-message" style="display: none;"></p>
     </section>
 
     <section id="charts">
@@ -48,22 +90,95 @@
       <button id="view-chart-button">View Chart</button>
       <div class="chart-container">
         <canvas id="stock-chart"></canvas>
-        <p id="chart-loader" style="display: none;">Loading chart...</p>
-        <p id="chart-error" style="color: red;"></p>
+        <p id="chart-loader" class="loader-message" style="display: none;">Loading chart...</p>
+        <p id="chart-error" class="error-message" style="display: none;"></p>
+        <p id="chart-success" class="success-message" style="display: none;"></p>
       </div>
 
     </section>
     <section id="fraud">
       <h2>Transaction Fraud Detection</h2>
-      <input type="number" placeholder="Amount (USD)" />
-      <input type="text" placeholder="Location (e.g., USA)" />
-      <button>Detect Fraud</button>
-      <p class="fraud-result"></p>
+      <input type="number" id="transaction-amount" placeholder="Amount (USD)" />
+      <input type="text" id="transaction-location" placeholder="Location (e.g., USA)" />
+      <button id="detect-fraud-button">Detect Fraud</button>
+      <p id="fraud-result" class="fraud-result"></p>
+      <p id="fraud-loader" class="loader-message" style="display: none;">Detecting fraud...</p>
+      <p id="fraud-error" class="error-message" style="display: none;"></p>
+      <p id="fraud-success" class="success-message" style="display: none;"></p>
+    </section>
+
+    <section id="trading-maximization">
+      <h2>Trading Profit Maximization</h2>
+      <p>Enter stock prices as a comma-separated list (e.g., 10,12,8,15,3,20):</p>
+      <input type="text" id="prices-input" placeholder="e.g., 10, 12, 8, 15, 3, 20" />
+      <button id="calculate-profit-button">Calculate Max Profit</button>
+      <p id="max-profit-output" class="output"></p>
+      <p id="trading-loader" class="loader-message" style="display: none;">Calculating...</p>
+      <p id="trading-error" class="error-message" style="display: none;"></p>
+      <p id="trading-success" class="success-message" style="display: none;"></p>
+    </section>
+
+    <section id="ai-chat">
+      <h2>Ask Gemini AI</h2>
+      <div id="chat-history">
+        <!-- Chat messages will be appended here -->
+      </div>
+      <input type="text" id="ai-chat-input" placeholder="Ask me anything..." />
+      <button id="ai-chat-send">Send</button>
+      <p id="ai-chat-loader" class="loader-message" style="display: none;">Gemini is thinking...</p>
+      <p id="ai-chat-error" class="error-message" style="display: none;"></p>
+    </section>
+
+    <section id="tool-descriptions">
+      <h2>Our Tools & Their Implications</h2>
+      <p><strong>Disclaimer:</strong> The tools described below are for educational purposes and ethical use only. Any use of these tools for unauthorized access or malicious activities is strictly prohibited and may have severe legal consequences. Users are solely responsible for ensuring they have explicit permission to test any systems.</p>
+
+      <h3>automatemaster-dump.sh</h3>
+      <p><strong>Purpose:</strong> This is a shell script designed for remote database dumping, typically used for transferring database backups or data between servers using <code>scp</code> and <code>ssh</code>.</p>
+      <p><strong>Security Implications:</strong> Directly integrating and executing this script from a public web interface is highly dangerous. It would require exposing SSH credentials or keys on the web server, making your system vulnerable to unauthorized access and command injection if compromised. It is intended for secure, internal use by authorized personnel only, and not for public web execution.</p>
+
+      <h3>automation-script.sh</h3>
+      <p><strong>Purpose:</strong> This is a comprehensive penetration testing and reconnaissance script. It leverages various open-source tools (e.g., Subfinder, Nmap, SQLMap, XSSHunter) to perform tasks like subdomain enumeration, port scanning, vulnerability detection (SQL injection, XSS, SSRF), and more.</p>
+      <p><strong>Security Implications:</strong> Allowing arbitrary users to execute this script with user-defined targets from a public web interface is a severe security risk. It could turn your server into a platform for illegal hacking activities, expose your IP address, and lead to legal repercussions. Its use should be strictly limited to controlled, authorized environments for ethical testing or educational demonstrations with pre-approved, safe targets.</p>
+
+      <h3>Optimize.bat</h3>
+      <p><strong>Purpose:</strong> This is a Windows batch script designed for PC optimization. It performs tasks such as clearing temporary files, running Disk Cleanup, System File Checker (SFC), and DISM commands to maintain system health and performance.</p>
+      <p><strong>Security Implications:</strong> This script performs system-level modifications and often requires Administrator privileges. Executing such a script from a web server is highly unsafe and impractical. It poses a significant risk of system compromise if the web server is breached. Furthermore, some commands are interactive (e.g., Disk Cleanup GUI) and cannot be run in a non-interactive web environment. It is intended for local execution by the user with appropriate administrative permissions.</p>
+
+      <h3>trading_maximization.py</h3>
+      <p><strong>Purpose:</strong> This Python script calculates the maximum profit that can be achieved by buying and selling a stock, given a list of its prices over time. It's a financial analysis tool based on a dynamic programming algorithm.</p>
+      <p><strong>Security Implications:</strong> This tool is designed for computational analysis and does not interact with the underlying operating system or external networks in a way that poses direct security risks when integrated into a web application. It processes numerical input and returns a calculated result, making it suitable for safe web integration.</p>
+
+      <h3>killer.sh</h3>
+      <p><strong>Purpose:</strong> This is a Bash script designed to terminate processes on Linux/macOS systems by their Process ID (PID). It attempts to forcefully kill processes within a specific PID range.</p>
+      <p><strong>Security Implications:</strong> Directly executing this script from a web interface is extremely dangerous. It allows system-level process manipulation, which could lead to denial of service or system instability if misused. It is intended for use in controlled, local environments by authorized users with a clear understanding of its impact.</p>
+
+      <h3>win-prokill.ps1</h3>
+      <p><strong>Purpose:</strong> This is a PowerShell script designed to stop processes on Windows systems by iterating through a range of Process IDs (PIDs) and forcefully terminating them.</p>
+      <p><strong>Security Implications:</strong> Similar to <code>killer.sh</code>, allowing direct execution of this script from a web interface poses severe security risks. It grants system-level control over processes, which could be exploited for malicious purposes, including system disruption. This script is intended for use in controlled, local Windows environments by authorized users.</p>
+
+      <h3>Binary Exploitation Examples (Rewriting-Instruction-Pointer & Stack-Overflow)</h3>
+      <p><strong>Purpose:</strong> These examples (<code>main.c</code> and <code>exploit.py</code>) demonstrate common binary exploitation techniques, specifically buffer overflows, to manipulate program execution flow and gain unauthorized access. They are designed for educational purposes to understand software vulnerabilities.</p>
+      <p><strong>Security Implications:</strong> These are intentionally vulnerable programs and active exploitation tools. Exposing them on a public web server, even for educational purposes, is an extremely high security risk. They could be misused by malicious actors to compromise your server or other systems. It is critical that these examples are only studied and experimented with in isolated, secure, and controlled local environments (e.g., virtual machines) by individuals with explicit authorization.</p>
+    </section>
+
+    <section id="reference-links">
+      <h2>Useful Reference Links</h2>
+      <ul>
+        <li><a href="https://react.dev/" target="_blank">React Docs</a> - The official documentation for React.</li>
+        <li><a href="https://developer.mozilla.org/" target="_blank">MDN Web Docs</a> - A comprehensive resource for web development documentation.</li>
+        <li><a href="https://stackoverflow.com/" target="_blank">Stack Overflow</a> - A popular Q&A platform for programmers.</li>
+      </ul>
     </section>
   </main>
+
+  </div> <!-- End of main-wrapper -->
 
   <footer>
     <p>&copy; 2025 Newlook. All rights reserved.</p>
   </footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode.js/1.0.0/qrcode.min.js"></script>
+  <script src="script.js"></script>
+  <script src="services.js"></script>
 </body>
 </html>
