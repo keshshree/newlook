@@ -7,7 +7,7 @@ body {
 }
 
 /* The sidebar menu */
-.sidebar {
+#sidebar {
     height: 100%; /* 100% Full-height */
     width: 0; /* 0 width - change this with JavaScript */
     position: fixed; /* Stay in place */
@@ -21,7 +21,7 @@ body {
 }
 
 /* The sidebar links */
-.sidebar a {
+#sidebar a {
     padding: 8px 8px 8px 32px;
     text-decoration: none;
     font-size: 25px;
@@ -31,48 +31,57 @@ body {
 }
 
 /* When you mouse over the sidebar links, change their color */
-.sidebar a:hover {
+#sidebar a:hover {
     color: #f1f1f1;
 }
 
 /* Position and style the close button (top right corner) */
-.sidebar .closebtn {
+#sidebar .closebtn {
     position: absolute;
     top: 0;
     right: 25px;
     font-size: 36px;
     margin-left: 50px;
 }
-/* 
+
+/* Sidebar submenu styles */
+#sidebar .submenu {
+    display: none;
+    padding-left: 20px;
+}
+
+#sidebar .submenu a {
+    font-size: 20px;
+}
+
+#sidebar .dropdown-icon {
+    float: right;
+    transition: transform 0.3s;
+}
+
+#sidebar .services-toggle.active .dropdown-icon {
+    transform: rotate(180deg);
+}
+
 /* Style page content - use this if you want to push the page content to the right when you open the sidebar */
 #main-wrapper {
     transition: margin-left .5s;
     padding: 16px;
     margin-left: 0px; /* Default state, no push */
-} */
+}
 
 #main-wrapper.active {
   margin-left: 250px; /* Match sidebar width */
 }
 
-
-
-    @media screen and (max-width: 768px) {
-    .landing-container {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .hero-section {
-        padding: 20px;
-    }
-
-    .form-section {
-        margin-top: 20px;
-    }
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 1em 0;
+    position: relative; /* Needed for absolute positioning of children */
 }
 
-
+header h1 {
     margin: 0;
     text-align: center; /* Keep the title centered */
 }
@@ -87,25 +96,6 @@ body {
     padding: 5px 10px;
     background-color: transparent;
     border: none;
-}
-
-header h1 {
-    margin: 0;
-}
-
-nav ul {
-    padding: 0;
-    list-style: none;
-}
-
-nav ul li {
-    display: inline;
-    margin: 0 15px;
-}
-
-nav ul li a {
-    color: #fff;
-    text-decoration: none;
 }
 
 main {
@@ -288,8 +278,6 @@ footer {
     background-color: #6a11cb;
 }
 
-
-
 /* Email Verification Styles */
 #email-verification-container {
     max-width: 500px;
@@ -328,20 +316,6 @@ footer {
 
 #email-verification-container button:hover {
     background-color: #0056b3;
-}
-
-@media screen and (max-width: 768px) {
-    main {
-        padding: 20px;
-    }
-
-    section {
-        padding: 20px;
-    }
-
-    section h2 {
-        font-size: 1.5em;
-    }
 }
 
 /* AI Chat Styles */
@@ -405,53 +379,44 @@ footer {
     background-color: #218838;
 }
 
-/* The sidebar menu */
-.sidebar {
-    height: 100%; /* 100% Full-height */
-    width: 0; /* 0 width - change this with JavaScript */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Stay on top */
-    top: 0;
-    left: 0;
-    background-color: #111; /* Black*/
-    overflow-x: hidden; /* Disable horizontal scroll */
-    padding-top: 60px; /* Place content 60px from the top */
-    transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
+/* Responsive styles */
+@media screen and (max-width: 768px) {
+    .landing-container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .hero-section {
+        padding: 20px;
+    }
+
+    .form-section {
+        margin-top: 20px;
+    }
+
+    main {
+        padding: 20px;
+    }
+
+    section {
+        padding: 20px;
+    }
+
+    section h2 {
+        font-size: 1.5em;
+    }
+
+    /* Sidebar on smaller screens */
+    #sidebar a {
+        font-size: 20px;
+    }
+
+    #sidebar .submenu a {
+        font-size: 16px;
+    }
 }
 
-/* The sidebar links */
-.sidebar a {
-    padding: 8px 8px 8px 32px;
-    text-decoration: none;
-    font-size: 25px;
-    color: #818181;
-    display: block;
-    transition: 0.3s;
-}
-
-/* When you mouse over the sidebar links, change their color */
-.sidebar a:hover {
-    color: #f1f1f1;
-}
-
-/* Position and style the close button (top right corner) */
-.sidebar .closebtn {
-    position: absolute;
-    top: 0;
-    right: 25px;
-    font-size: 36px;
-    margin-left: 50px;
-}
-
-/* Style page content - use this if you want to push the page content to the right when you open the sidebar */
-#main-wrapper {
-    transition: margin-left .5s;
-    padding: 16px;
-    margin-left: 0px; /* Default state, no push */
-}
-
-/* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
 @media screen and (max-height: 450px) {
-    .sidebar {padding-top: 15px;}
-    .sidebar a {font-size: 18px;}
+    #sidebar {padding-top: 15px;}
+    #sidebar a {font-size: 18px;}
 }

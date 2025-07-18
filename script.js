@@ -5,24 +5,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const welcomeSubmitButton = document.getElementById('welcome-submit');
     const welcomeError = document.getElementById('welcome-error');
 
-    const mfaContainer = document.getElementById('mfa-container');
-    const mfaEmailInput = document.getElementById('mfa-email');
-    const mfaEmailSubmitButton = document.getElementById('mfa-email-submit');
-    const mfaEmailError = document.getElementById('mfa-email-error');
-    const mfaSetupSection = document.getElementById('mfa-setup-section');
-    const mfaQrCode = document.getElementById('mfa-qr-code');
-    const mfaSecretKey = document.getElementById('mfa-secret-key');
-    const mfaCodeInput = document.getElementById('mfa-code');
-    const mfaVerifyButton = document.getElementById('mfa-verify-button');
-    const mfaVerifyError = document.getElementById('mfa-verify-error');
-    const mfaVerifySuccess = document.getElementById('mfa-verify-success');
-    const mfaLoader = document.getElementById('mfa-loader');
+    const emailVerificationContainer = document.getElementById('email-verification-container');
+    const verificationCodeInput = document.getElementById('verification-code');
+    const verifyCodeButton = document.getElementById('verify-code-button');
+    const verificationError = document.getElementById('verification-error');
+    const verificationSuccess = document.getElementById('verification-success');
+    const verificationLoader = document.getElementById('verification-loader');
 
     const mainContent = document.getElementById('main-content');
     const mainWrapper = document.getElementById('main-wrapper');
     const sidebar = document.getElementById('sidebar');
     const openBtn = document.querySelector('.openbtn');
     const closeBtn = document.querySelector('.closebtn');
+    const servicesToggle = document.querySelector('.services-toggle');
+    const submenu = document.querySelector('.submenu');
 
     let userEmail = '';
 
@@ -43,6 +39,15 @@ document.addEventListener('DOMContentLoaded', function() {
         if (mainWrapper) {
             mainWrapper.style.marginLeft = "0";
         }
+    }
+
+    // Toggle services submenu
+    if (servicesToggle && submenu) {
+        servicesToggle.addEventListener('click', function(event) {
+            event.preventDefault();
+            submenu.style.display = submenu.style.display === 'block' ? 'none' : 'block';
+            servicesToggle.classList.toggle('active');
+        });
     }
 
 // ✅ Attach listeners
@@ -87,128 +92,41 @@ if (closeBtn) {
 
         userEmail = email;
         welcomeContainer.style.display = 'none';
-        mfaContainer.style.display = 'block';
-        mfaEmailInput.value = userEmail; // Pre-fill MFA email input
+        emailVerificationContainer.style.display = 'block';
+        // In a real application, you would send the verification email here
+        console.log(`Sending verification code to ${userEmail}`);
     });
 
-    // MFA email submit handler (for re-entering email if needed)
-    mfaEmailSubmitButton.addEventListener('click', async function() {
-        const email = mfaEmailInput.value.trim();
-        mfaEmailError.style.display = 'none';
-        mfaLoader.style.display = 'none';
-        mfaSetupSection.style.display = 'none';
-        mfaQrCode.style.display = 'none';
-        mfaSecretKey.innerText = '';
+    // Email verification code handler
+    verifyCodeButton.addEventListener('click', async function() {
+        const verificationCode = verificationCodeInput.value.trim();
+        verificationError.style.display = 'none';
+        verificationSuccess.style.display = 'none';
+        verificationLoader.style.display = 'block';
 
-        if (!email) {
-            mfaEmailError.innerText = 'Email cannot be empty.';
-            mfaEmailError.style.display = 'block';
+        if (!verificationCode) {
+            verificationError.innerText = 'Please enter the 7-digit code.';
+            verificationError.style.display = 'block';
+            verificationLoader.style.display = 'none';
             return;
         }
 
-        if (!isValidEmail(email)) {
-            mfaEmailError.innerText = 'Invalid email domain. Only @gmail.com and @yahoo.com are allowed.';
-            mfaEmailError.style.display = 'block';
-            return;
+        // Simulate verification (replace with actual API call)
+        if (verificationCode === '1234567') { // Example valid code
+            verificationSuccess.innerText = 'Verification successful! Redirecting...';
+            verificationSuccess.style.display = 'block';
+            emailVerificationContainer.style.display = 'none';
+            mainContent.style.display = 'block'; // Show main content
+        } else {
+            verificationError.innerText = 'Invalid verification code.';
+            verificationError.style.display = 'block';
         }
-
-        userEmail = email;
-        mfaLoader.style.display = 'block';
-
-        try {
-            const response = await fetch(`http://127.0.0.1:5000/mfa/setup`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email: userEmail })
-            });
-            const data = await response.json();
-
-            if (data.secret) {
-                // Clear previous QR code
-                mfaQrCode.innerHTML = '';
-                // Generate QR code using qrcode.js
-                new QRCode(mfaQrCode, {
-                    text: data.provisioning_uri,
-                    width: 200,
-                    height: 200,
-                });
-                mfaSecretKey.innerText = data.secret;
-                mfaSetupSection.style.display = 'block';
-            } else if (data.error) {
-                mfaEmailError.innerText = `Error: ${data.error}`;
-                mfaEmailError.style.display = 'block';
-            } else {
-                mfaEmailError.innerText = 'Failed to set up MFA. Unexpected response.';
-                mfaEmailError.style.display = 'block';
-            }
-        } catch (error) {
-            console.error('Error setting up MFA:', error);
-            mfaEmailError.innerText = 'Failed to set up MFA. Check console for details.';
-            mfaEmailError.style.display = 'block';
-        } finally {
-            mfaLoader.style.display = 'none';
-        }
-    });
-
-    // MFA code verification handler
-    mfaVerifyButton.addEventListener('click', async function() {
-        const mfaCode = mfaCodeInput.value.trim();
-        mfaVerifyError.style.display = 'none';
-        mfaVerifySuccess.style.display = 'none';
-        mfaLoader.style.display = 'block';
-
-        if (!mfaCode) {
-            mfaVerifyError.innerText = 'Please enter the 6-digit code.';
-            mfaVerifyError.style.display = 'block';
-            mfaLoader.style.display = 'none';
-            return;
-        }
-
-        // MFA Bypass
-        if (mfaCode === '101010') {
-            mfaVerifySuccess.innerText = 'Bypass successful! Redirecting...';
-            mfaVerifySuccess.style.display = 'block';
-            mfaContainer.style.display = 'none';
-            mainWrapper.style.display = 'block'; // Show main content
-            return;
-        }
-
-        try {
-            const response = await fetch(`http://127.0.0.1:5000/mfa/verify`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email: userEmail, code: mfaCode })
-            });
-            const data = await response.json();
-
-            if (data.verified) {
-                mfaVerifySuccess.innerText = 'MFA verified successfully! Redirecting...';
-                mfaVerifySuccess.style.display = 'block';
-                mfaContainer.style.display = 'none';
-                mainWrapper.style.display = 'block'; // Show main content
-            } else if (data.error) {
-                mfaVerifyError.innerText = `Verification failed: ${data.error}`;
-                mfaVerifyError.style.display = 'block';
-            } else {
-                mfaVerifyError.innerText = 'Verification failed. Invalid code or unexpected response.';
-                mfaVerifyError.style.display = 'block';
-            }
-        } catch (error) {
-            console.error('Error verifying MFA code:', error);
-            mfaVerifyError.innerText = 'Failed to verify MFA code. Check console for details.';
-            mfaVerifyError.style.display = 'block';
-        } finally {
-            mfaLoader.style.display = 'none';
-        }
+        verificationLoader.style.display = 'none';
     });
 
     // Initial state: show welcome screen
     welcomeContainer.style.display = 'block';
-    mfaContainer.style.display = 'none';
+    emailVerificationContainer.style.display = 'none';
     mainContent.style.display = 'none';
     mainWrapper.style.display = 'block'; // Ensure mainWrapper is visible
 });
