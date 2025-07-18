@@ -56,20 +56,23 @@ body {
 }
 
 
-/* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
-@media screen and (max-height: 450px) {
-    .sidebar {padding-top: 15px;}
-    .sidebar a {font-size: 18px;}
+
+    @media screen and (max-width: 768px) {
+    .landing-container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .hero-section {
+        padding: 20px;
+    }
+
+    .form-section {
+        margin-top: 20px;
+    }
 }
 
-header {
-    background-color: #333;
-    color: #fff;
-    padding: 1em 0;
-    position: relative; /* Needed for absolute positioning of children */
-}
 
-header h1 {
     margin: 0;
     text-align: center; /* Keep the title centered */
 }
@@ -106,25 +109,34 @@ nav ul li a {
 }
 
 main {
-    padding: 20px;
-    max-width: 900px;
-    margin: 20px auto;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    max-width: 1200px;
+    margin: 40px auto;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
 section {
-    margin-bottom: 30px;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #f9f9f9;
+    margin-bottom: 40px;
+    padding: 30px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    background-color: #fdfdfd;
+    transition: box-shadow 0.3s ease;
+}
+
+section:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 section h2 {
+    font-size: 1.8em;
     color: #333;
     margin-top: 0;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 10px;
 }
 
 input[type="text"],
@@ -205,49 +217,81 @@ footer {
     margin-top: 10px;
 }
 
-/* Welcome Screen Styles */
-#welcome-container {
+/* Landing Page Styles */
+.landing-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(to right, #6a11cb, #2575fc);
+    padding: 20px;
+}
+
+.hero-section {
+    flex: 1;
+    padding: 40px;
+    color: white;
+    text-align: left;
+}
+
+.hero-section h1 {
+    font-size: 3.5em;
+    margin-bottom: 20px;
+}
+
+.hero-section p {
+    font-size: 1.2em;
+    line-height: 1.6;
+}
+
+.form-section {
+    flex: 1;
     max-width: 500px;
-    margin: 50px auto;
-    padding: 30px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
+    padding: 40px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+#welcome-container {
     text-align: center;
 }
 
 #welcome-container h2 {
-    color: #333;
+    font-size: 2em;
     margin-bottom: 20px;
 }
 
 #welcome-container input[type="text"],
 #welcome-container input[type="email"] {
     width: calc(100% - 22px);
-    padding: 10px;
-    margin-bottom: 15px;
+    padding: 15px;
+    margin-bottom: 20px;
     border: 1px solid #ddd;
-    border-radius: 4px;
+    border-radius: 5px;
+    font-size: 1em;
 }
 
 #welcome-container button {
-    background-color: #28a745;
+    width: 100%;
+    padding: 15px;
+    background-color: #2575fc;
     color: white;
-    padding: 10px 20px;
     border: none;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
-    font-size: 16px;
-    margin-top: 10px;
+    font-size: 1.1em;
+    transition: background-color 0.3s;
 }
 
 #welcome-container button:hover {
-    background-color: #218838;
+    background-color: #6a11cb;
 }
 
-/* MFA Styles */
-#mfa-container {
+
+
+/* Email Verification Styles */
+#email-verification-container {
     max-width: 500px;
     margin: 50px auto;
     padding: 30px;
@@ -258,13 +302,12 @@ footer {
     text-align: center;
 }
 
-#mfa-container h2 {
+#email-verification-container h2 {
     color: #333;
     margin-bottom: 20px;
 }
 
-#mfa-container input[type="email"],
-#mfa-container input[type="text"] {
+#email-verification-container input[type="text"] {
     width: calc(100% - 22px);
     padding: 10px;
     margin-bottom: 15px;
@@ -272,7 +315,7 @@ footer {
     border-radius: 4px;
 }
 
-#mfa-container button {
+#email-verification-container button {
     background-color: #007bff;
     color: white;
     padding: 10px 20px;
@@ -283,22 +326,22 @@ footer {
     margin-top: 10px;
 }
 
-#mfa-container button:hover {
+#email-verification-container button:hover {
     background-color: #0056b3;
 }
 
-#mfa-qr-code {
-    margin: 20px auto;
-    border: 1px solid #eee;
-    padding: 5px;
-    background-color: #fff;
-}
+@media screen and (max-width: 768px) {
+    main {
+        padding: 20px;
+    }
 
-#mfa-secret-key {
-    font-family: monospace;
-    background-color: #eee;
-    padding: 5px;
-    border-radius: 3px;
+    section {
+        padding: 20px;
+    }
+
+    section h2 {
+        font-size: 1.5em;
+    }
 }
 
 /* AI Chat Styles */

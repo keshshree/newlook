@@ -10,13 +10,16 @@
 <body>
   <div id="sidebar">
     <a href="javascript:void(0)" class="closebtn">&times;</a>
-    <a href="#translation">Translation</a>
-    <a href="#charts">Charts</a>
-    <a href="#sentiment">Sentiment</a>
-    <a href="#fraud">Fraud Detection</a>
-    <a href="#ai-chat">Gemini AI</a>
-    <a href="#tool-descriptions">Tool Descriptions</a>
-    <a href="#reference-links">Reference Links</a>
+    <a href="#" class="services-toggle">Services <span class="dropdown-icon">▼</span></a>
+    <div class="submenu">
+      <a href="#translation">Translation</a>
+      <a href="#charts">Charts</a>
+      <a href="#sentiment">Sentiment</a>
+      <a href="#fraud">Fraud Detection</a>
+      <a href="#ai-chat">Gemini AI</a>
+    </div>
+    <a href="#tool-descriptions">Our Tools</a>
+    <a href="#reference-links">References</a>
   </div>
 
   <div id="main-wrapper">
@@ -25,35 +28,29 @@
       <h1>Newlook</h1>
     </header>
 
-    <div id="welcome-container">
-    <h2>Welcome to Newlook!</h2>
-    <p>Please enter your name and email to continue.</p>
-    <input type="text" id="welcome-name" placeholder="Your Name" />
-    <input type="email" id="welcome-email" placeholder="Your Email" />
-    <button id="welcome-submit">Continue</button>
-    <p id="welcome-error" class="error-message" style="display: none;"></p>
-  </div>
-
-  <div id="mfa-container" style="display: none;">
-    <h2>Multi-Factor Authentication</h2>
-    <div id="email-input-section">
-      <p>Please enter your email address to proceed. Only @gmail.com and @yahoo.com are accepted.</p>
-      <input type="email" id="mfa-email" placeholder="Enter your email" />
-      <button id="mfa-email-submit">Submit Email</button>
-      <p id="mfa-email-error" class="error-message" style="display: none;"></p>
+    <div class="landing-container">
+      <div class="hero-section">
+        <h1>Welcome to Newlook</h1>
+        <p>Your all-in-one platform for financial analysis, translation, and AI-powered insights. Get started today!</p>
+      </div>
+      <div id="welcome-container" class="form-section">
+        <h2>Get Started</h2>
+        <p>Please enter your name and email to continue.</p>
+        <input type="text" id="welcome-name" placeholder="Your Name" />
+        <input type="email" id="welcome-email" placeholder="Your Email" />
+        <button id="welcome-submit">Continue</button>
+        <p id="welcome-error" class="error-message" style="display: none;"></p>
+      </div>
     </div>
 
-    <div id="mfa-setup-section" style="display: none;">
-      <p>Scan the QR code with your Google Authenticator app:</p>
-      <div id="mfa-qr-code"></div>
-      <p>Or manually enter this key: <span id="mfa-secret-key"></span></p>
-      <p>Enter the 6-digit code from your authenticator app:</p>
-      <input type="text" id="mfa-code" placeholder="Enter MFA code" />
-      <button id="mfa-verify-button">Verify Code</button>
-      <p id="mfa-verify-error" class="error-message" style="display: none;"></p>
-      <p id="mfa-verify-success" class="success-message" style="display: none;"></p>
-    </div>
-    <p id="mfa-loader" class="loader-message" style="display: none;">Loading...</p>
+  <div id="email-verification-container" style="display: none;">
+    <h2>Email Verification</h2>
+    <p>A 7-digit verification code has been sent to your email. Please enter it below.</p>
+    <input type="text" id="verification-code" placeholder="Enter 7-digit code" maxlength="7" />
+    <button id="verify-code-button">Verify Code</button>
+    <p id="verification-error" class="error-message" style="display: none;"></p>
+    <p id="verification-success" class="success-message" style="display: none;"></p>
+    <p id="verification-loader" class="loader-message" style="display: none;">Verifying...</p>
   </div>
 
   <main id="main-content" style="display: none;">
