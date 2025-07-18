@@ -1,5 +1,9 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from model import train_model, predict, get_history
 from sentiment import analyze_sentiment
 from recommendation import get_recommendations
