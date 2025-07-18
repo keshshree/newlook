@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+import validator
+
 from model import train_model, predict, get_history
 from sentiment import analyze_sentiment
 from recommendation import get_recommendations
@@ -29,8 +31,9 @@ def is_valid_email_domain(email):
 @app.route('/mfa/setup', methods=['POST'])
 def mfa_setup():
     email = request.json.get('email')
-    if not email or not is_valid_email_domain(email):
-        return jsonify({'error': 'Invalid or unsupported email domain.'}), 400
+    is_valid, error_message = validator.validate_email(email)
+    if not is_valid:
+        return jsonify({'error': error_message}), 400
 
     # Generate a random secret key
     secret = pyotp.random_base32()
@@ -49,8 +52,13 @@ def mfa_verify():
     email = request.json.get('email')
     code = request.json.get('code')
 
-    if not email or not code:
-        return jsonify({'error': 'Email and code are required.'}), 400
+    is_valid_email, email_error = validator.validate_email(email)
+    is_valid_code, code_error = validator.validate_verification_code(code)
+
+    if not is_valid_email:
+        return jsonify({'error': email_error}), 400
+    if not is_valid_code:
+        return jsonify({'error': code_error}), 400
 
     secret = mfa_secrets.get(email)
     if not secret:
@@ -68,46 +76,70 @@ def mfa_verify():
 @app.route('/history', methods=['GET'])
 def get_stock_history():
     ticker = request.args.get('ticker')
+    is_valid, error_message = validator.validate_stock_ticker(ticker)
+    if not is_valid:
+        return jsonify({'error': error_message}), 400
     history = get_history(ticker)
     return jsonify(history.to_dict('records'))
 
 @app.route('/predict', methods=['GET'])
 def get_prediction():
     ticker = request.args.get('ticker')
+    is_valid, error_message = validator.validate_stock_ticker(ticker)
+    if not is_valid:
+        return jsonify({'error': error_message}), 400
     model = train_model(ticker)
     prediction = predict(model)
     return jsonify({'prediction': prediction.tolist()})
 
 @app.route('/sentiment', methods=['POST'])
 def get_sentiment():
-    text = request.json['text']
+    text = request.json.get('text')
+    is_valid, error_message = validator.validate_text(text)
+    if not is_valid:
+        return jsonify({'error': error_message}), 400
     sentiment = analyze_sentiment(text)
     return jsonify({'sentiment': sentiment})
 
 @app.route('/recommend', methods=['POST'])
 def get_recommendations_route():
-    preference = request.json['preference']
+    preference = request.json.get('preference')
+    is_valid, error_message = validator.validate_text(preference)
+    if not is_valid:
+        return jsonify({'error': error_message}), 400
     recommendations = get_recommendations(preference)
     return jsonify({'recommendations': recommendations})
 
 @app.route('/validate_card', methods=['POST'])
 def validate_card():
-    card_number = request.json['card_number']
+    card_number = request.json.get('card_number')
+    # Assuming card_number is a string of digits
+    if not isinstance(card_number, str) or not card_number.isdigit():
+        return jsonify({'error': 'Card number must be a string of digits.'}), 400
     is_valid = luhn_check(card_number)
     return jsonify({'is_valid': is_valid})
 
 @app.route('/detect_fraud', methods=['POST'])
 def detect_fraud_route():
-    amount = request.json['amount']
-    location = request.json['location']
+    amount = request.json.get('amount')
+    location = request.json.get('location')
+
+    is_valid_amount, amount_error = validator.validate_amount(amount)
+    is_valid_location, location_error = validator.validate_location(location)
+
+    if not is_valid_amount:
+        return jsonify({'error': amount_error}), 400
+    if not is_valid_location:
+        return jsonify({'error': location_error}), 400
     is_fraud = detect_fraud(amount, location)
     return jsonify({'is_fraud': is_fraud})
 
 @app.route('/max_profit', methods=['POST'])
 def get_max_profit():
     prices = request.json.get('prices')
-    if not isinstance(prices, list):
-        return jsonify({'error': 'Prices must be a list.'}), 400
+    is_valid, error_message = validator.validate_prices_list(prices)
+    if not is_valid:
+        return jsonify({'error': error_message}), 400
     try:
         profit = max_profit(prices)
         return jsonify({'max_profit': profit})
@@ -117,6 +149,9 @@ def get_max_profit():
 @app.route('/stock_info', methods=['GET'])
 def get_stock_info():
     ticker_symbol = request.args.get('ticker', default='AAPL', type=str)
+    is_valid, error_message = validator.validate_stock_ticker(ticker_symbol)
+    if not is_valid:
+        return jsonify({'error': error_message}), 400
     try:
         stock = yf.Ticker(ticker_symbol)
         info = stock.info
@@ -142,6 +177,14 @@ def translate_text():
     data = request.json
     text = data.get('text', '')
     target_language = data.get('target_language', 'en')
+
+    is_valid_text, text_error = validator.validate_text(text)
+    is_valid_lang, lang_error = validator.validate_target_language(target_language)
+
+    if not is_valid_text:
+        return jsonify({'error': text_error}), 400
+    if not is_valid_lang:
+        return jsonify({'error': lang_error}), 400
     try:
         blob = TextBlob(text)
         translated_text = str(blob.translate(to=target_language))
@@ -157,8 +200,13 @@ def ask_ai():
     user_id = request.json.get('user_id') # This could be the user's email after MFA
     message = request.json.get('message')
 
-    if not user_id or not message:
-        return jsonify({'error': 'User ID and message are required.'}), 400
+    is_valid_user_id, user_id_error = validator.validate_user_id(user_id)
+    is_valid_message, message_error = validator.validate_message(message)
+
+    if not is_valid_user_id:
+        return jsonify({'error': user_id_error}), 400
+    if not is_valid_message:
+        return jsonify({'error': message_error}), 400
 
     try:
         response_text = get_gemini_response(user_id, message)

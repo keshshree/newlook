@@ -154,6 +154,15 @@ button:hover {
     background-color: #4cae4c;
 }
 
+.secondary-button {
+    background-color: #6c757d;
+    margin-left: 10px;
+}
+
+.secondary-button:hover {
+    background-color: #5a6268;
+}
+
 .output,
 .fraud-result {
     margin-top: 15px;

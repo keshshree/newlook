@@ -56,7 +56,9 @@
   <main id="main-content" style="display: none;">
     <section id="translation">
       <h2>Translation Service</h2>
+      <label for="text-to-translate">Text to Translate:</label>
       <textarea id="text-to-translate" placeholder="Enter text to translate..."></textarea>
+      <label for="target-language">Translate to:</label>
       <select id="target-language">
         <option value="es">Spanish</option>
         <option value="fr">French</option>
@@ -65,6 +67,8 @@
         <option value="ja">Japanese</option>
       </select>
       <button id="translate-button">Translate</button>
+      <button id="reset-translation-button" class="secondary-button">Clear</button>
+      <h3>Translated Text:</h3>
       <p id="translated-text" class="output"></p>
       <p id="translation-loader" class="loader-message" style="display: none;">Translating...</p>
       <p id="translation-error" class="error-message" style="display: none;"></p>
@@ -73,8 +77,10 @@
 
     <section id="stock-info">
       <h2>Current Stock Information</h2>
+      <label for="stock-ticker-input">Stock Ticker Symbol:</label>
       <input type="text" id="stock-ticker-input" placeholder="e.g., AAPL" />
       <button id="get-stock-info-button">Get Stock Info</button>
+      <button id="reset-stock-info-button" class="secondary-button">Clear</button>
       <div id="stock-info-output" class="output"></div>
       <p id="stock-info-loader" class="loader-message" style="display: none;">Fetching stock info...</p>
       <p id="stock-info-error" class="error-message" style="display: none;"></p>
@@ -83,8 +89,10 @@
 
     <section id="charts">
       <h2>Stock Market Charts</h2>
+      <label for="chart-ticker-input">Stock Ticker Symbol:</label>
       <input type="text" id="chart-ticker-input" placeholder="e.g., AAPL" />
       <button id="view-chart-button">View Chart</button>
+      <button id="reset-chart-button" class="secondary-button">Clear</button>
       <div class="chart-container">
         <canvas id="stock-chart"></canvas>
         <p id="chart-loader" class="loader-message" style="display: none;">Loading chart...</p>
@@ -93,11 +101,26 @@
       </div>
 
     </section>
+
+    <section id="most-traded-stocks">
+      <h2>Most Traded Stocks (Sample)</h2>
+      <p>Click on a ticker to quickly view its information or chart:</p>
+      <div class="stock-ticker-buttons">
+        <button class="sample-ticker-button" data-ticker="AAPL">AAPL</button>
+        <button class="sample-ticker-button" data-ticker="MSFT">MSFT</button>
+        <button class="sample-ticker-button" data-ticker="GOOGL">GOOGL</button>
+        <button class="sample-ticker-button" data-ticker="AMZN">AMZN</button>
+        <button class="sample-ticker-button" data-ticker="TSLA">TSLA</button>
+      </div>
+    </section>
     <section id="fraud">
       <h2>Transaction Fraud Detection</h2>
+      <label for="transaction-amount">Amount (USD):</label>
       <input type="number" id="transaction-amount" placeholder="Amount (USD)" />
+      <label for="transaction-location">Location (e.g., USA):</label>
       <input type="text" id="transaction-location" placeholder="Location (e.g., USA)" />
       <button id="detect-fraud-button">Detect Fraud</button>
+      <button id="reset-fraud-button" class="secondary-button">Clear</button>
       <p id="fraud-result" class="fraud-result"></p>
       <p id="fraud-loader" class="loader-message" style="display: none;">Detecting fraud...</p>
       <p id="fraud-error" class="error-message" style="display: none;"></p>
@@ -106,9 +129,10 @@
 
     <section id="trading-maximization">
       <h2>Trading Profit Maximization</h2>
-      <p>Enter stock prices as a comma-separated list (e.g., 10,12,8,15,3,20):</p>
+      <label for="prices-input">Enter stock prices as a comma-separated list (e.g., 10,12,8,15,3,20):</label>
       <input type="text" id="prices-input" placeholder="e.g., 10, 12, 8, 15, 3, 20" />
       <button id="calculate-profit-button">Calculate Max Profit</button>
+      <button id="reset-profit-button" class="secondary-button">Clear</button>
       <p id="max-profit-output" class="output"></p>
       <p id="trading-loader" class="loader-message" style="display: none;">Calculating...</p>
       <p id="trading-error" class="error-message" style="display: none;"></p>
@@ -120,8 +144,10 @@
       <div id="chat-history">
         <!-- Chat messages will be appended here -->
       </div>
+      <label for="ai-chat-input">Your Message:</label>
       <input type="text" id="ai-chat-input" placeholder="Ask me anything..." />
       <button id="ai-chat-send">Send</button>
+      <button id="reset-ai-chat-button" class="secondary-button">Clear Chat</button>
       <p id="ai-chat-loader" class="loader-message" style="display: none;">Gemini is thinking...</p>
       <p id="ai-chat-error" class="error-message" style="display: none;"></p>
     </section>
