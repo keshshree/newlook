@@ -13,10 +13,12 @@ from validator import luhn_check
 from fraud_detector import detect_fraud
 from trading_maximization import max_profit
 import yfinance as yf
-from textblob import TextBlob
+import translators as ts
 import pyotp
 import base64
 from gemini_ai import get_gemini_response
+import requests
+from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 CORS(app)
@@ -186,8 +188,7 @@ def translate_text():
     if not is_valid_lang:
         return jsonify({'error': lang_error}), 400
     try:
-        blob = TextBlob(text)
-        translated_text = str(blob.translate(to=target_language))
+        translated_text = ts.translate_text(text, to_language=target_language)
         return jsonify({'translated_text': translated_text})
     except Exception as e:
         import traceback
@@ -213,9 +214,4 @@ def ask_ai():
         return jsonify({'response': response_text})
     except Exception as e:
         import traceback
-        print("Error in /ask_ai endpoint:")
-        traceback.print_exc()
-        return jsonify({'error': str(e)}), 500
-
-if __name__ == '__main__':
-    app.run(debug=True)
+        print("Error in /ask_ai endpoint:")        traceback.print_exc()        return jsonify({'error': str(e)}), 500@app.route('/summarize', methods=['POST'])def summarize_article():    url = request.json.get('url')    if not url:        return jsonify({'error': 'URL is required.'}), 400    try:        # Fetch the article content        response = requests.get(url)        response.raise_for_status()  # Raise an exception for bad status codes        # Parse the HTML and extract the main text content        soup = BeautifulSoup(response.text, 'html.parser')        paragraphs = soup.find_all('p')        article_text = '\n'.join([p.get_text() for p in paragraphs])        # Use Gemini AI to summarize the article text        summary = get_gemini_response('summarizer', f"Summarize the following article:\n\n{article_text}")        return jsonify({'summary': summary})    except Exception as e:        import traceback        print(f"Error in /summarize endpoint: {e}")        traceback.print_exc()        return jsonify({'error': 'Failed to summarize the article.'}), 500if __name__ == '__main__':    app.run(debug=True)

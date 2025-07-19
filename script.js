@@ -173,60 +173,29 @@ document.addEventListener('DOMContentLoaded', function() {
         welcomeError.style.display = 'none';
 
         const nameValidation = validateName(name);
-        const emailValidation = validateEmail(email);
-
         if (!nameValidation.isValid) {
             welcomeError.innerText = nameValidation.message;
             welcomeError.style.display = 'block';
             return;
         }
 
+        const emailValidation = validateEmail(email);
         if (!emailValidation.isValid) {
             welcomeError.innerText = emailValidation.message;
             welcomeError.style.display = 'block';
             return;
         }
 
-        userEmail = email;
-        welcomeContainer.style.display = 'none';
-        emailVerificationContainer.style.display = 'block';
-        // In a real application, you would send the verification email here
-        console.log(`Sending verification code to ${userEmail}`);
+        // Hide the landing container and show the main content
+        const landingContainer = document.querySelector('.landing-container');
+        if (landingContainer) {
+            landingContainer.style.display = 'none';
+        }
+        mainContent.style.display = 'block';
     });
 
-    // Email verification code handler
-    verifyCodeButton.addEventListener('click', async function() {
-        const verificationCode = verificationCodeInput.value.trim();
-        verificationError.style.display = 'none';
-        verificationSuccess.style.display = 'none';
-        verificationLoader.style.display = 'block';
-
-        const codeValidation = validateVerificationCode(verificationCode);
-        if (!codeValidation.isValid) {
-            verificationError.innerText = codeValidation.message;
-            verificationError.style.display = 'block';
-            verificationLoader.style.display = 'none';
-            return;
-        }
-
-        // Simulate verification (replace with actual API call)
-        if (verificationCode === '1234567') { // Example valid code
-            verificationSuccess.innerText = 'Verification successful! Redirecting...';
-            verificationSuccess.style.display = 'block';
-            emailVerificationContainer.style.display = 'none';
-            mainContent.style.display = 'block'; // Show main content
-        } else {
-            verificationError.innerText = 'Invalid verification code.';
-            verificationError.style.display = 'block';
-        }
-        verificationLoader.style.display = 'none';
-    });
-
-    // Initial state: show welcome screen
-    welcomeContainer.style.display = 'block';
-    emailVerificationContainer.style.display = 'none';
+    // Initial state: show welcome screen, hide main content
     mainContent.style.display = 'none';
-    mainWrapper.style.display = 'block'; // Ensure mainWrapper is visible
 
     // Translation Service
     const textToTranslate = document.getElementById('text-to-translate');
