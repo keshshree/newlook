@@ -429,3 +429,24 @@ footer {
     #sidebar {padding-top: 15px;}
     #sidebar a {font-size: 18px;}
 }
+
+/* Map Section Styles */
+#map-container {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden; /* Ensures the map stays within the rounded corners */
+}
+
+.map-search-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+#location-search-input {
+    flex-grow: 1;
+}
+
+#location-search-button {
+    flex-shrink: 0;
+}

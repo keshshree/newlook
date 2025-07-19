@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Newlook</title>
   <link rel="stylesheet" href="styles.css" />
-
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
 </head>
 <body>
   <div id="sidebar">
@@ -17,6 +17,7 @@
       <a href="#sentiment">Sentiment</a>
       <a href="#fraud">Fraud Detection</a>
       <a href="#ai-chat">Gemini AI</a>
+      <a href="#map">Map</a>
     </div>
     <a href="#tool-descriptions">Our Tools</a>
     <a href="#reference-links">References</a>
@@ -193,6 +194,18 @@
         <li><a href="https://stackoverflow.com/" target="_blank">Stack Overflow</a> - A popular Q&A platform for programmers.</li>
       </ul>
     </section>
+
+    <section id="map">
+      <h2>Interactive Map</h2>
+      <p>Explore locations, search for places, and view geographical data.</p>
+      <div class="map-search-container">
+        <input type="text" id="location-search-input" placeholder="Search for a location..." />
+        <button id="location-search-button">Search</button>
+      </div>
+      <div id="map-container" style="height: 500px; margin-top: 20px;">
+        <div id="map" style="height: 100%;"></div>
+      </div>
+    </section>
   </main>
 
   </div> <!-- End of main-wrapper -->
@@ -200,8 +213,11 @@
   <footer>
     <p>&copy; 2025 Newlook. All rights reserved.</p>
   </footer>
+  <script src="https://maps.googleapis.com/maps/api/js?key=Google_API_KEY&libraries=places"></script>
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script src="qrcode.min.js"></script>
   <script src="script.js"></script>
   <script src="services.js"></script>
+  <script src="map.js"></script>
 </body>
 </html>

@@ -148,7 +148,7 @@ def get_max_profit():
 
 @app.route('/stock_info', methods=['GET'])
 def get_stock_info():
-    ticker_symbol = request.args.get('ticker', default='AAPL', type=str)
+    ticker_symbol = request.args.get('ticker', default='GOOGLE', type=str)
     is_valid, error_message = validator.validate_stock_ticker(ticker_symbol)
     if not is_valid:
         return jsonify({'error': error_message}), 400
