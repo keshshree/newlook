@@ -1,7 +1,9 @@
+
 from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 from dotenv import load_dotenv
 import io
+import traceback
 
 load_dotenv()
 
@@ -176,20 +178,7 @@ def get_stock_info():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.route('/translate', methods=['POST'])
-def translate_text():
-    data = request.json
-    text = data.get('text', '')
-    target_language = data.get('target_language', 'en')
-
-    is_valid_text, text_error = validator.validate_text(text)
-    is_valid_lang, lang_error = validator.validate_target_language(target_language)
-
-    if not is_valid_text:
-        return jsonify({'error': text_error}), 400
-    if not is_valid_lang:
-        return jsonify({'error': lang_error}), 400
-    import traceback
+    # ...existing code...
 
 @app.route('/translate', methods=['POST'])
 def translate_text():
