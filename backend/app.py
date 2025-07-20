@@ -1,6 +1,7 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 from dotenv import load_dotenv
+import io
 
 load_dotenv()
 
@@ -12,6 +13,7 @@ from recommendation import get_recommendations
 from validator import luhn_check
 from fraud_detector import detect_fraud
 from trading_maximization import max_profit
+from resume import generate_resume_pdf
 import yfinance as yf
 import translators as ts
 import pyotp
@@ -187,14 +189,29 @@ def translate_text():
         return jsonify({'error': text_error}), 400
     if not is_valid_lang:
         return jsonify({'error': lang_error}), 400
+    import traceback
+
+@app.route('/translate', methods=['POST'])
+def translate_text():
+    data = request.json
+    text = data.get('text', '')
+    target_language = data.get('target_language', 'en')
+
+    is_valid_text, text_error = validator.validate_text(text)
+    is_valid_lang, lang_error = validator.validate_target_language(target_language)
+
+    if not is_valid_text:
+        return jsonify({'error': text_error}), 400
+    if not is_valid_lang:
+        return jsonify({'error': lang_error}), 400
+
     try:
         translated_text = ts.translate_text(text, to_language=target_language)
         return jsonify({'translated_text': translated_text})
     except Exception as e:
-        import traceback
-        print("Error in /translate endpoint:")
+        print(f"Error during translation: {e}")
         traceback.print_exc()
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': 'An error occurred during translation. Please try again later.'}), 500
 
 @app.route('/ask_ai', methods=['POST'])
 def ask_ai():
@@ -214,4 +231,37 @@ def ask_ai():
         return jsonify({'response': response_text})
     except Exception as e:
         import traceback
-        print("Error in /ask_ai endpoint:")        traceback.print_exc()        return jsonify({'error': str(e)}), 500@app.route('/summarize', methods=['POST'])def summarize_article():    url = request.json.get('url')    if not url:        return jsonify({'error': 'URL is required.'}), 400    try:        # Fetch the article content        response = requests.get(url)        response.raise_for_status()  # Raise an exception for bad status codes        # Parse the HTML and extract the main text content        soup = BeautifulSoup(response.text, 'html.parser')        paragraphs = soup.find_all('p')        article_text = '\n'.join([p.get_text() for p in paragraphs])        # Use Gemini AI to summarize the article text        summary = get_gemini_response('summarizer', f"Summarize the following article:\n\n{article_text}")        return jsonify({'summary': summary})    except Exception as e:        import traceback        print(f"Error in /summarize endpoint: {e}")        traceback.print_exc()        return jsonify({'error': 'Failed to summarize the article.'}), 500if __name__ == '__main__':    app.run(debug=True)
+        print("Error in /ask_ai endpoint:")
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/generate-resume', methods=['POST'])
+def generate_resume():
+    data = request.get_json()
+    pdf_buffer = generate_resume_pdf(data)
+    return send_file(pdf_buffer, as_attachment=True, download_name='resume.pdf', mimetype='application/pdf')
+
+@app.route('/summarize', methods=['POST'])
+def summarize_article():
+    url = request.json.get('url')
+    if not url:
+        return jsonify({'error': 'URL is required.'}), 400
+    try:
+        # Fetch the article content
+        response = requests.get(url)
+        response.raise_for_status()  # Raise an exception for bad status codes
+        # Parse the HTML and extract the main text content
+        soup = BeautifulSoup(response.text, 'html.parser')
+        paragraphs = soup.find_all('p')
+        article_text = '\n'.join([p.get_text() for p in paragraphs])
+        # Use Gemini AI to summarize the article text
+        summary = get_gemini_response('summarizer', f"Summarize the following article:\n\n{article_text}")
+        return jsonify({'summary': summary})
+    except Exception as e:
+        import traceback
+        print(f"Error in /summarize endpoint: {e}")
+        traceback.print_exc()
+        return jsonify({'error': 'Failed to summarize the article.'}), 500
+
+if __name__ == '__main__':
+    app.run(debug=True)

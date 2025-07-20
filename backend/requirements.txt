@@ -4,7 +4,7 @@ python-dotenv
 yfinance
 translators
 numpy
-sklearn
+scikit-learn
 pyotp
 requests
 beautifulsoup4
@@ -12,3 +12,4 @@ google-generativeai
 google-generativeai
 google-api-core
 flake8
+reportlab
