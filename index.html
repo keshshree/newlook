@@ -30,41 +30,83 @@
       <h1>Newlook</h1>
     </header>
 
-    <div class="landing-container">
-      <div class="hero-section">
-        <h1>Welcome to Newlook</h1>
-        <p>Your all-in-one platform for financial analysis, translation, and AI-powered insights. Get started today!</p>
-      </div>
-      <div id="welcome-container" class="form-section">
-        <h2>Get Started</h2>
-        <p>Please enter your name and email to continue.</p>
-        <input type="text" id="welcome-name" placeholder="Your Name" />
-        <input type="email" id="welcome-email" placeholder="Your Email" />
-        <button id="welcome-submit">Continue</button>
-        <p id="welcome-error" class="error-message" style="display: none;"></p>
-      </div>
-    </div>
+    
 
   <main id="main-content" style="display: none;">
-    <section id="translation">
-      <h2>Translation Service</h2>
-      <label for="text-to-translate">Text to Translate:</label>
-      <textarea id="text-to-translate" placeholder="Enter text to translate..."></textarea>
-      <label for="target-language">Translate to:</label>
-      <select id="target-language">
-        <option value="es">Spanish</option>
-        <option value="fr">French</option>
-        <option value="de">German</option>
-        <option value="zh-CN">Chinese (Simplified)</option>
-        <option value="ja">Japanese</option>
-      </select>
-      <button id="translate-button">Translate</button>
-      <button id="reset-translation-button" class="secondary-button">Clear</button>
-      <h3>Translated Text:</h3>
-      <p id="translated-text" class="output"></p>
-      <p id="translation-loader" class="loader-message" style="display: none;">Translating...</p>
-      <p id="translation-error" class="error-message" style="display: none;"></p>
-      <p id="translation-success" class="success-message" style="display: none;"></p>
+    <section id="translation" class="translation-section">
+      <h2>Translation Services</h2>
+      <div class="translation-cards-container">
+        <!-- Text Translation Card -->
+        <div class="card translation-card">
+          <h3>Text Translation</h3>
+          <label for="text-to-translate">Text to Translate:</label>
+          <textarea id="text-to-translate" placeholder="Enter text..."></textarea>
+          <label for="target-language-text">Translate to:</label>
+          <select id="target-language-text">
+            <option value="es">Spanish</option>
+            <option value="fr">French</option>
+            <option value="de">German</option>
+            <option value="zh-CN">Chinese (Simplified)</option>
+            <option value="ja">Japanese</option>
+          </select>
+          <button id="translate-button">Translate</button>
+          <div id="text-translation-output" class="output"></div>
+          <div id="text-translation-loader" class="loader" style="display: none;"></div>
+          <div id="text-translation-error" class="error-message" style="display: none;"></div>
+        </div>
+
+        <!-- File Translation Card -->
+        <div class="card translation-card">
+          <h3>File Translation</h3>
+          <label for="file-to-translate">Upload File (.txt, .pdf, .docx):</label>
+          <input type="file" id="file-to-translate" accept=".txt,.pdf,.docx" disabled />
+          <label for="target-language-file">Translate to:</label>
+          <select id="target-language-file" disabled>
+            <option value="es">Spanish</option>
+            <option value="fr">French</option>
+            <option value="de">German</option>
+          </select>
+          <button id="translate-file-button" disabled>Translate File</button>
+          <div id="file-translation-output" class="output"></div>
+          <div id="file-translation-loader" class="loader" style="display: none;"></div>
+          <div id="file-translation-error" class="error-message" style="display: none;"></div>
+        </div>
+
+        <!-- Image Translation Card -->
+        <div class="card translation-card">
+          <h3>Image Translation</h3>
+          <label for="image-to-translate">Upload Image (.png, .jpg):</label>
+          <input type="file" id="image-to-translate" accept=".png,.jpg,.jpeg" disabled />
+          <label for="target-language-image">Translate to:</label>
+          <select id="target-language-image" disabled>
+            <option value="es">Spanish</option>
+            <option value="fr">French</option>
+            <option value="de">German</option>
+          </select>
+          <button id="translate-image-button" disabled>Translate Image</button>
+          <div id="image-translation-output" class="output"></div>
+          <div id="image-translation-loader" class="loader" style="display: none;"></div>
+          <div id="image-translation-error" class="error-message" style="display: none;"></div>
+        </div>
+
+        <!-- Voice Translation Card -->
+        <div class="card translation-card">
+          <h3>Voice Translation</h3>
+          <label>Record or Upload Audio:</label>
+          <button id="record-voice-button" disabled>Start Recording</button>
+          <input type="file" id="voice-to-translate" accept=".mp3,.wav" disabled="false"/>
+          <label for="target-language-voice">Translate to:</label>
+          <select id="target-language-voice" disabled>
+            <option value="es">Spanish</option>
+            <option value="fr">French</option>
+            <option value="de">German</option>
+          </select>
+          <button id="translate-voice-button" disabled>Translate Voice</button>
+          <div id="voice-translation-output" class="output"></div>
+          <div id="voice-translation-loader" class="loader" style="display: none;"></div>
+          <div id="voice-translation-error" class="error-message" style="display: none;"></div>
+        </div>
+      </div>
     </section>
 
     <section id="stock-info">

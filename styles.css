@@ -514,3 +514,81 @@ footer {
     border: 1px solid #d1e7fd;
     border-radius: 5px;
 }
+
+/* Translation Section Styles */
+.translation-section {
+    background-color: #f0f8ff; /* Light blue background */
+    padding: 40px;
+    border-radius: 12px;
+}
+
+.translation-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.card.translation-card {
+    background-color: #ffffff;
+    border: 1px solid #d1e7fd;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card.translation-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.translation-card h3 {
+    font-size: 1.5em;
+    color: #0056b3;
+    margin-bottom: 20px;
+}
+
+.translation-card label {
+    font-weight: bold;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.translation-card textarea,
+.translation-card select,
+.translation-card input[type="file"] {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.translation-card button {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    font-size: 1em;
+}
+
+.translation-card button:hover {
+    background-color: #0056b3;
+}
+
+.translation-card button:disabled {
+    background-color: #a0c4ff;
+    cursor: not-allowed;
+}
+
+.loader {
+    border: 4px solid #f3f3f3; /* Light grey */
+    border-top: 4px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
