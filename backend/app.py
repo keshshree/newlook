@@ -20,7 +20,7 @@ import yfinance as yf
 import translators as ts
 import pyotp
 import base64
-from gemini_ai import get_gemini_response
+from ai_service import get_openai_response
 import requests
 from bs4 import BeautifulSoup
 
@@ -216,7 +216,7 @@ def ask_ai():
         return jsonify({'error': message_error}), 400
 
     try:
-        response_text = get_gemini_response(user_id, message)
+        response_text = get_openai_response(user_id, message)
         return jsonify({'response': response_text})
     except Exception as e:
         import traceback
@@ -244,7 +244,7 @@ def summarize_article():
         paragraphs = soup.find_all('p')
         article_text = '\n'.join([p.get_text() for p in paragraphs])
         # Use Gemini AI to summarize the article text
-        summary = get_gemini_response('summarizer', f"Summarize the following article:\n\n{article_text}")
+        summary = get_openai_response('summarizer', f"Summarize the following article:\n\n{article_text}")
         return jsonify({'summary': summary})
     except Exception as e:
         import traceback

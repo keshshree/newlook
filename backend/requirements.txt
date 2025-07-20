@@ -8,8 +8,6 @@ scikit-learn
 pyotp
 requests
 beautifulsoup4
-google-generativeai
-google-generativeai
-google-api-core
+openai
 flake8
 reportlab
