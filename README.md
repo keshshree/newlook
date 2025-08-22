@@ -13,7 +13,7 @@ Newlook is a versatile web application designed to provide a range of services, 
 ## Features
 
 ### Translation Service
-Translate text between various languages.
+Translate text between various languages. Now features live, real-time translation as you type.
 
 ### Stock Market Charts
 View historical stock price charts for given tickers.
@@ -29,6 +29,12 @@ Calculate the maximum profit achievable from a given list of stock prices.
 
 ### Gemini AI Chatbot
 Interact with a Gemini-powered AI chatbot to ask questions and get responses.
+
+### Powerball Prediction
+Predict upcoming Powerball winning numbers. Users must provide a valid email address and are limited to 3 predictions per day. The prediction model is trained on historical data to avoid predicting past winning numbers. Please play responsibly (18+).
+
+### Code Editor
+A privacy-focused, web-based code editor similar to VS Code or Sublime. It allows users to open local files, edit code with syntax highlighting, and save/download their work directly to their device. No user data is stored on the server. The editor is secured with Content Security Policy (CSP) and Subresource Integrity (SRI).
 
 ## Installation
 
