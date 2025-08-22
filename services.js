@@ -486,3 +486,44 @@ calculateProfitButton.addEventListener('click', async function() {
         tradingLoader.style.display = 'none';
     }
 });
+
+document.getElementById('get-powerball-prediction-button').addEventListener('click', async function() {
+    const email = document.getElementById('powerball-email-input').value;
+    const predictionOutput = document.getElementById('powerball-prediction-output');
+    const loader = document.getElementById('powerball-loader');
+    const error = document.getElementById('powerball-error');
+
+    predictionOutput.innerHTML = '';
+    error.style.display = 'none';
+    loader.style.display = 'block';
+
+    try {
+        const response = await fetch(`http://127.0.0.1:5000/powerball_prediction`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email: email })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            const prediction = data.prediction;
+            predictionOutput.innerHTML = `
+                <p><strong>Your Powerball Prediction:</strong></p>
+                <p>White Balls: ${prediction.white_balls.join(', ')}</p>
+                <p>Powerball: ${prediction.powerball}</p>
+            `;
+        } else {
+            error.innerText = `Error: ${data.error}`;
+            error.style.display = 'block';
+        }
+    } catch (err) {
+        console.error('Error getting Powerball prediction:', err);
+        error.innerText = 'Failed to get prediction. Please try again later.';
+        error.style.display = 'block';
+    } finally {
+        loader.style.display = 'none';
+    }
+});

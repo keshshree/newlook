@@ -252,5 +252,13 @@ def summarize_article():
         traceback.print_exc()
         return jsonify({'error': 'Failed to summarize the article.'}), 500
 
+from powerball import get_powerball_prediction
+
+@app.route('/powerball_prediction', methods=['POST'])
+def powerball_prediction():
+    email = request.json.get('email')
+    result, status_code = get_powerball_prediction(email)
+    return jsonify(result), status_code
+
 if __name__ == '__main__':
     app.run(debug=True)

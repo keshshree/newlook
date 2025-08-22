@@ -19,6 +19,7 @@
       <a href="#ai-chat">Gemini AI</a>
       <a href="#map">Map</a>
       <a href="#news">News & Insights</a>
+      <a href="#powerball">Powerball</a>
     </div>
     <a href="#tool-descriptions">Our Tools</a>
     <a href="#reference-links">References</a>
@@ -250,6 +251,18 @@
       <div id="news-loader" class="loader-message" style="display: none;">Fetching and analyzing news...</div>
       <p id="news-error" class="error-message" style="display: none;"></p>
       <div id="news-results-container"></div>
+    </section>
+
+    <section id="powerball">
+      <h2>Powerball Prediction</h2>
+      <p>Enter your email to get your Powerball prediction. You can get up to 3 predictions per day.</p>
+      <p class="disclaimer"><strong>Disclaimer:</strong> You must be 18+ to play. Please play responsibly. If you win and would like to donate, we would appreciate a smiley face! :)</p>
+      <label for="powerball-email-input">Your Email:</label>
+      <input type="email" id="powerball-email-input" placeholder="Enter your email" />
+      <button id="get-powerball-prediction-button">Get Prediction</button>
+      <div id="powerball-prediction-output" class="output"></div>
+      <p id="powerball-loader" class="loader-message" style="display: none;">Getting your prediction...</p>
+      <p id="powerball-error" class="error-message" style="display: none;"></p>
     </section>
   </main>
 
