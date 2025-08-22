@@ -20,6 +20,7 @@
       <a href="#map">Map</a>
       <a href="#news">News & Insights</a>
       <a href="#powerball">Powerball</a>
+      <a href="#editor">Code Editor</a>
     </div>
     <a href="#tool-descriptions">Our Tools</a>
     <a href="#reference-links">References</a>
@@ -50,7 +51,6 @@
             <option value="zh-CN">Chinese (Simplified)</option>
             <option value="ja">Japanese</option>
           </select>
-          <button id="translate-button">Translate</button>
           <div id="text-translation-output" class="output"></div>
           <div id="text-translation-loader" class="loader" style="display: none;"></div>
           <div id="text-translation-error" class="error-message" style="display: none;"></div>
@@ -264,6 +264,16 @@
       <p id="powerball-loader" class="loader-message" style="display: none;">Getting your prediction...</p>
       <p id="powerball-error" class="error-message" style="display: none;"></p>
     </section>
+
+    <section id="editor">
+      <h2>Code Editor</h2>
+        <div>
+            <input type="file" id="file-input" style="display: none;" />
+            <button id="open-file-button">Open File</button>
+            <button id="save-file-button">Save File</button>
+        </div>
+        <div id="editor-container" style="width: 100%; height: 500px; border: 1px solid #ccc;"></div>
+    </section>
   </main>
 
   </div> <!-- End of main-wrapper -->
@@ -278,5 +288,7 @@
   <script src="services.js"></script>
   <script src="map.js"></script>
   <script src="news.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.33.0/min/vs/loader.js"></script>
+  <script src="editor.js"></script>
 </body>
 </html>

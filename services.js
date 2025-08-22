@@ -1,19 +1,33 @@
-document.getElementById('translate-button').addEventListener('click', async function() {
-    const text = document.getElementById('text-to-translate').value;
-    const targetLanguage = document.getElementById('target-language').value;
-    const translatedTextElement = document.getElementById('translated-text');
-    const translationLoader = document.getElementById('translation-loader');
-    const translationError = document.getElementById('translation-error');
-    const translationSuccess = document.getElementById('translation-success');
+const textToTranslate = document.getElementById('text-to-translate');
+const targetLanguageText = document.getElementById('target-language-text');
+const translatedTextElement = document.getElementById('text-translation-output');
+const translationLoader = document.getElementById('text-translation-loader');
+const translationError = document.getElementById('text-translation-error');
 
-    // Clear previous messages
-    translatedTextElement.innerText = '';
-    translationError.innerText = '';
-    translationSuccess.innerText = '';
-    translationLoader.style.display = 'block'; // Show loader
+let debounceTimer;
+
+const debounce = (func, delay) => {
+    return function() {
+        const context = this;
+        const args = arguments;
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => func.apply(context, args), delay);
+    }
+}
+
+const translateLive = async () => {
+    const text = textToTranslate.value;
+    const targetLanguage = targetLanguageText.value;
+
+    if (!text.trim()) {
+        translatedTextElement.innerText = '';
+        return;
+    }
+
+    translationLoader.style.display = 'block';
+    translationError.style.display = 'none';
 
     try {
-        console.log('Sending translation request...');
         const response = await fetch(`http://127.0.0.1:5000/translate`, {
             method: 'POST',
             headers: {
@@ -21,29 +35,26 @@ document.getElementById('translate-button').addEventListener('click', async func
             },
             body: JSON.stringify({ text: text, target_language: targetLanguage })
         });
-        console.log('Received response:', response);
-        const data = await response.json();
-        console.log('Parsed data:', data);
 
-        if (data.translated_text) {
+        const data = await response.json();
+
+        if (response.ok) {
             translatedTextElement.innerText = data.translated_text;
-            translationSuccess.innerText = 'Translation successful!';
-            translationSuccess.style.display = 'block';
-        } else if (data.error) {
+        } else {
             translationError.innerText = `Error: ${data.error}`;
             translationError.style.display = 'block';
-        } else {
-            translationError.innerText = 'Unexpected response from server.';
-            translationError.style.display = 'block';
         }
-    } catch (error) {
-        console.error('Error translating text:', error);
-        translationError.innerText = 'Failed to translate text. Check console for details.';
+    } catch (err) {
+        console.error('Error translating text:', err);
+        translationError.innerText = 'Failed to translate text. Please try again later.';
         translationError.style.display = 'block';
     } finally {
-        translationLoader.style.display = 'none'; // Hide loader
+        translationLoader.style.display = 'none';
     }
-});
+}
+
+textToTranslate.addEventListener('input', debounce(translateLive, 500));
+targetLanguageText.addEventListener('change', translateLive);
 
 document.getElementById('get-stock-info-button').addEventListener('click', async function() {
     const ticker = document.getElementById('stock-ticker-input').value.toUpperCase();
