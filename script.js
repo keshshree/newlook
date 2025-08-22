@@ -45,3 +45,4 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     mainContent.style.display = 'block';
+});
