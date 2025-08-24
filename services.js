@@ -176,39 +176,7 @@ document.getElementById('view-chart-button').addEventListener('click', async fun
 
 
 
-document.getElementById('predict-button').addEventListener('click', async function() {
-    const ticker = document.getElementById('predict-ticker-input').value.toUpperCase();
-    const predictLoader = document.getElementById('predict-loader');
-    const predictError = document.getElementById('predict-error');
-    const predictSuccess = document.getElementById('predict-success');
-    const predictionResult = document.getElementById('prediction-result');
 
-    // Clear previous messages
-    predictError.innerText = '';
-    predictSuccess.innerText = '';
-    predictionResult.innerText = '';
-    predictLoader.style.display = 'block'; // Show loader
-
-    try {
-        const response = await fetch(`http://127.0.0.1:5000/predict?ticker=${ticker}`);
-        const data = await response.json();
-
-        if (data.prediction && data.prediction.length > 0) {
-            predictionResult.innerText = `Predicted next value for ${ticker}: ${data.prediction[0].toFixed(2)}`;
-            predictSuccess.innerText = 'Prediction successful!';
-            predictSuccess.style.display = 'block';
-        } else {
-            predictError.innerText = 'Could not get prediction for this ticker. Please try another.';
-            predictError.style.display = 'block';
-        }
-    } catch (error) {
-        console.error('Error fetching prediction:', error);
-        predictError.innerText = 'Failed to get prediction. Please check the ticker and try again.';
-        predictError.style.display = 'block';
-    } finally {
-        predictLoader.style.display = 'none'; // Hide loader
-    }
-});
 
 document.getElementById('analyze-sentiment-button').addEventListener('click', async function() {
     const text = document.getElementById('sentiment-text').value;
@@ -503,6 +471,8 @@ document.getElementById('get-powerball-prediction-button').addEventListener('cli
     const predictionOutput = document.getElementById('powerball-prediction-output');
     const loader = document.getElementById('powerball-loader');
     const error = document.getElementById('powerball-error');
+
+    console.log('Powerball button clicked!');
 
     predictionOutput.innerHTML = '';
     error.style.display = 'none';

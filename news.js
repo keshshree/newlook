@@ -5,7 +5,38 @@ document.addEventListener('DOMContentLoaded', function() {
     const newsLoader = document.getElementById('news-loader');
     const newsError = document.getElementById('news-error');
 
-    const NEWS_API_KEY = 'Google_API_KEY'; // Replace with your actual News API key
+    const NEWS_API_KEY = 'YOUR_NEWS_API_KEY'; // Replace with your actual News API key
+
+    async function fetchTrendingNews() {
+        newsResultsContainer.innerHTML = '';
+        newsError.style.display = 'none';
+        newsLoader.style.display = 'block';
+
+        if (NEWS_API_KEY === 'Google_API_KEY') {
+            newsError.innerText = 'Please replace YOUR_NEWS_API_KEY in news.js with your actual News API key.';
+            newsError.style.display = 'block';
+            newsLoader.style.display = 'none';
+            return;
+        }
+
+        try {
+            const articles = await fetchNews('technology', true);
+            if (articles.length > 0) {
+                displayNews([articles[0]]);
+            } else {
+                newsError.innerText = 'No trending news found.';
+                newsError.style.display = 'block';
+            }
+        } catch (error) {
+            console.error('Error fetching trending news:', error);
+            newsError.innerText = 'An error occurred while fetching trending news. Please check the console for details.';
+            newsError.style.display = 'block';
+        } finally {
+            newsLoader.style.display = 'none';
+        }
+    }
+
+    fetchTrendingNews();
 
     if (fetchNewsButton) {
         fetchNewsButton.addEventListener('click', async function() {
@@ -47,8 +78,15 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    async function fetchNews(topic) {
-        const response = await fetch(`https://newsapi.org/v2/everything?q=${encodeURIComponent(topic)}&apiKey=${NEWS_API_KEY}&pageSize=10&sortBy=publishedAt`);
+    async function fetchNews(topic, isTrending = false) {
+        let url = `https://newsapi.org/v2/`;
+        if (isTrending) {
+            url += `top-headlines?country=us&category=${encodeURIComponent(topic)}&apiKey=${NEWS_API_KEY}&pageSize=1`;
+        } else {
+            url += `everything?q=${encodeURIComponent(topic)}&apiKey=${NEWS_API_KEY}&pageSize=10&sortBy=publishedAt`;
+        }
+
+        const response = await fetch(url);
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.message || 'Failed to fetch news');

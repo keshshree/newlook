@@ -239,6 +239,20 @@
       <div id="map-container" style="height: 500px; margin-top: 20px;">
         <div id="map" style="height: 100%;"></div>
       </div>
+
+      <h3>Accident Prediction</h3>
+      <label for="predict-lat">Latitude:</label>
+      <input type="number" id="predict-lat" placeholder="e.g., 34.05" step="any" />
+      <label for="predict-lng">Longitude:</label>
+      <input type="number" id="predict-lng" placeholder="e.g., -118.25" step="any" />
+      <label for="predict-weather">Weather Condition:</label>
+      <input type="text" id="predict-weather" placeholder="e.g., Clear, Rain, Snow" />
+      <label for="predict-hour">Hour of Day (0-23):</label>
+      <input type="number" id="predict-hour" placeholder="e.g., 14" min="0" max="23" />
+      <button id="predict-accident-button">Predict Accident Probability</button>
+      <div id="accident-prediction-output" class="output"></div>
+      <p id="accident-prediction-loader" class="loader-message" style="display: none;">Predicting...</p>
+      <p id="accident-prediction-error" class="error-message" style="display: none;"></p>
     </section>
 
     <section id="news">
@@ -265,14 +279,53 @@
       <p id="powerball-error" class="error-message" style="display: none;"></p>
     </section>
 
+    <section id="resume-generator">
+      <h2>Resume Generator</h2>
+      <p>Fill in your details to generate a professional resume.</p>
+      <form id="resume-form">
+        <h3>Personal Information</h3>
+        <label for="name">Full Name:</label>
+        <input type="text" id="name" name="name" required>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <label for="phone">Phone:</label>
+        <input type="tel" id="phone" name="phone">
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address">
+
+        <h3>Work Experience</h3>
+        <div id="work-experience-container">
+          <!-- Work experience fields will be added here dynamically -->
+        </div>
+        <button type="button" id="add-work-experience">Add Work Experience</button>
+
+        <h3>Education</h3>
+        <div id="education-container">
+          <!-- Education fields will be added here dynamically -->
+        </div>
+        <button type="button" id="add-education">Add Education</button>
+
+        <h3>Skills</h3>
+        <label for="skills">Skills (comma-separated):</label>
+        <input type="text" id="skills" name="skills">
+
+        <button type="submit" id="generate-resume-button">Generate Resume</button>
+      </form>
+      <div id="resume-output" class="output"></div>
+      <p id="resume-loader" class="loader-message" style="display: none;">Generating resume...</p>
+      <p id="resume-error" class="error-message" style="display: none;"></p>
+    </section>
+
     <section id="editor">
       <h2>Code Editor</h2>
         <div>
             <input type="file" id="file-input" style="display: none;" />
             <button id="open-file-button">Open File</button>
             <button id="save-file-button">Save File</button>
+            <button id="run-code-button">Run</button>
         </div>
         <div id="editor-container" style="width: 100%; height: 500px; border: 1px solid #ccc;"></div>
+        <div id="output-container" style="width: 100%; height: 200px; border: 1px solid #ccc; margin-top: 10px;"></div>
     </section>
   </main>
 
@@ -290,5 +343,6 @@
   <script src="news.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.33.0/min/vs/loader.js"></script>
   <script src="editor.js"></script>
+  <script src="resume.js"></script>
 </body>
 </html>

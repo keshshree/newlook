@@ -253,12 +253,149 @@ def summarize_article():
         return jsonify({'error': 'Failed to summarize the article.'}), 500
 
 from powerball import get_powerball_prediction
+from accident_prediction import predict_accident_probability
 
 @app.route('/powerball_prediction', methods=['POST'])
 def powerball_prediction():
     email = request.json.get('email')
     result, status_code = get_powerball_prediction(email)
     return jsonify(result), status_code
+
+@app.route('/predict_accident', methods=['POST'])
+def predict_accident():
+    data = request.json
+    latitude = data.get('latitude')
+    longitude = data.get('longitude')
+    weather_condition = data.get('weather_condition')
+    hour_of_day = data.get('hour_of_day')
+
+    if None in [latitude, longitude, weather_condition, hour_of_day]:
+        return jsonify({'error': 'Missing required parameters.'}), 400
+
+    result, status_code = predict_accident_probability(latitude, longitude, weather_condition, hour_of_day)
+    return jsonify(result), status_code
+
+@app.route('/run', methods=['POST'])
+def run_code():
+    data = request.get_json()
+    code = data.get('code')
+    language = data.get('language')
+
+    if not code or not language:
+        return jsonify({'error': 'Missing code or language'}), 400
+
+    try:
+        if language == 'python':
+            import io
+            from contextlib import redirect_stdout
+            f = io.StringIO()
+            with redirect_stdout(f):
+                exec(code)
+            output = f.getvalue()
+        elif language == 'javascript':
+            import subprocess
+            result = subprocess.run(['node', '-e', code], capture_output=True, text=True)
+            output = result.stdout + result.stderr
+        else:
+            output = f"Language '{language}' is not supported for execution."
+
+        return jsonify({'output': output})
+    except Exception as e:
+        return jsonify({'output': str(e)})
+
+from functools import wraps
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+
+# API Key Decorator
+def require_api_key(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'X-API-KEY' not in request.headers or request.headers['X-API-KEY'] != 'YOUR_API_KEY':
+            return jsonify({'error': 'Unauthorized'}), 401
+        return f(*args, **kwargs)
+    return decorated_function
+
+@app.route('/generate_resume', methods=['POST'])
+@require_api_key
+def generate_resume():
+    data = request.get_json()
+
+    try:
+        response = make_response(generate_pdf(data))
+        response.headers['Content-Type'] = 'application/pdf'
+        response.headers['Content-Disposition'] = 'attachment; filename=resume.pdf'
+        return response
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+def generate_pdf(data):
+    import io
+    buffer = io.BytesIO()
+    c = canvas.Canvas(buffer, pagesize=letter)
+    width, height = letter
+
+    # Title
+    c.setFont('Helvetica-Bold', 16)
+    c.drawCentredString(width / 2.0, height - 50, data.get('name', ''))
+
+    # Personal Info
+    c.setFont('Helvetica', 10)
+    c.drawCentredString(width / 2.0, height - 70, f"{data.get('email', '')} | {data.get('phone', '')} | {data.get('address', '')}")
+
+    y_position = height - 120
+
+    # Work Experience
+    c.setFont('Helvetica-Bold', 12)
+    c.drawString(50, y_position, 'Work Experience')
+    y_position -= 20
+
+    for i in range(1, 10):
+        job_title = data.get(f'job-title-{i}')
+        if not job_title:
+            break
+        company = data.get(f'company-{i}', '')
+        work_dates = data.get(f'work-dates-{i}', '')
+        work_description = data.get(f'work-description-{i}', '')
+
+        c.setFont('Helvetica-Bold', 10)
+        c.drawString(70, y_position, f"{job_title} at {company}")
+        y_position -= 15
+        c.setFont('Helvetica', 10)
+        c.drawString(70, y_position, work_dates)
+        y_position -= 15
+        c.drawString(70, y_position, work_description)
+        y_position -= 20
+
+    # Education
+    c.setFont('Helvetica-Bold', 12)
+    c.drawString(50, y_position, 'Education')
+    y_position -= 20
+
+    for i in range(1, 10):
+        degree = data.get(f'degree-{i}')
+        if not degree:
+            break
+        school = data.get(f'school-{i}', '')
+        education_dates = data.get(f'education-dates-{i}', '')
+
+        c.setFont('Helvetica-Bold', 10)
+        c.drawString(70, y_position, f"{degree} from {school}")
+        y_position -= 15
+        c.setFont('Helvetica', 10)
+        c.drawString(70, y_position, education_dates)
+        y_position -= 20
+
+    # Skills
+    c.setFont('Helvetica-Bold', 12)
+    c.drawString(50, y_position, 'Skills')
+    y_position -= 20
+    c.setFont('Helvetica', 10)
+    c.drawString(70, y_position, data.get('skills', ''))
+
+    c.save()
+    buffer.seek(0)
+    return buffer
 
 if __name__ == '__main__':
     app.run(debug=True)
