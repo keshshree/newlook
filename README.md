@@ -36,6 +36,12 @@ Predict upcoming Powerball winning numbers. Users must provide a valid email add
 ### Code Editor
 A privacy-focused, web-based code editor similar to VS Code or Sublime. It allows users to open local files, edit code with syntax highlighting, and save/download their work directly to their device. No user data is stored on the server. The editor is secured with Content Security Policy (CSP) and Subresource Integrity (SRI).
 
+### Resume Generator
+Generate a professional resume from your personal information, work experience, education, and skills. The resume can be downloaded as a PDF file.
+
+### Accident Prediction
+Predict the probability of a car accident based on location, weather conditions, and time of day.
+
 ## Installation
 
 To set up and run Newlook locally, follow these steps:
