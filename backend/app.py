@@ -3,6 +3,7 @@ from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 from dotenv import load_dotenv
 import io
+import tempfile
 import traceback
 
 load_dotenv()
@@ -286,12 +287,15 @@ def run_code():
 
     try:
         if language == 'python':
-            import io
-            from contextlib import redirect_stdout
-            f = io.StringIO()
-            with redirect_stdout(f):
-                exec(code)
-            output = f.getvalue()
+            import tempfile
+            import subprocess
+            with tempfile.NamedTemporaryFile('w', suffix='.py', delete=False) as temp_py:
+                temp_py.write(code)
+                temp_py_path = temp_py.name
+            result = subprocess.run(['python', temp_py_path], capture_output=True, text=True, timeout=10)
+            output = result.stdout + result.stderr
+            import os
+            os.remove(temp_py_path)
         elif language == 'javascript':
             import subprocess
             result = subprocess.run(['node', '-e', code], capture_output=True, text=True)
